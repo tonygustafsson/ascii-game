@@ -14,40 +14,41 @@
             context: document.getElementById('game-canvas').getContext("2d"),
             width: Math.floor(window.innerWidth * 0.95),
             height: Math.floor(window.innerHeight * 0.8),
-            blockSize: null,
             init: function initCanvas() {
                 /* Initialize the canvas, set the width and height */
-
                 var canvas = this;
 
                 game.canvas.context.canvas.width  = canvas.width;
                 game.canvas.context.canvas.height = canvas.height;
 
-                game.canvas.blockSize = Math.floor(game.canvas.width / game.map.columns);
-                document.getElementsByTagName('h1')[0].style.fontSize = game.canvas.blockSize + "px";
+                game.map.blockSize = Math.floor(game.canvas.width / game.map.columns);
+                game.canvas.context.translate(0, game.map.blockSize);
+                document.getElementsByTagName('h1')[0].style.fontSize = game.map.blockSize + "px";
 
-                game.canvas.context.font = game.canvas.blockSize + "px monospace";
+                game.canvas.context.font = game.map.blockSize + "px monospace";
                 game.canvas.context.fillStyle = "limegreen";
             },
             paint: function paint() {
-                /* Will paint each generation to the canvas */
-
                 var canvas = this;
 
                 // Clear all cells so we won't have to paint out dead cells (performance hog)
-                canvas.context.clearRect(0, 0, canvas.width, canvas.height);
+                canvas.context.clearRect(0, 0 - game.map.blockSize, canvas.width, canvas.height);
 
                 for (var i = 0; i < game.map.blocks.length; i++) {
-                    var block = game.map.blocks[i];
-                    game.canvas.context.fillText(block.character, block.column * game.canvas.blockSize, block.row * (game.canvas.blockSize * 1.5) + game.canvas.blockSize);
+                    var block = game.map.blocks[i],
+                        posX = Math.floor(block.column() * game.map.blockSize),
+                        posY = Math.floor(block.row() * (game.map.blockSize * 1.5));
+
+                    game.canvas.context.fillText(block.character, posX, posY);
                 }
             }
         },
         map: {
             blocks: [],
+            blockSize: null,
             rows: 0,
             columns: 0,
-            createBlock: function createBlock (character, row, column) {
+            createBlock: function createBlock (character, index) {
                 var block = {
                     character: character,
                     type: (function () {
@@ -63,10 +64,16 @@
                                 return "space";
                         }
                     })(),
-                    row: row,
-                    column: column,
-                    index: (game.map.columns * row) + column
-                }
+                    row: function getRow () {
+                        // Get current row index
+                        return Math.floor(index / game.map.columns);
+                    },
+                    column: function getColumn () {
+                        // Get current column index on it's own row with modulus
+                        return Math.floor(index % game.map.columns);
+                    },
+                    index: index
+                };
 
                 game.map.blocks.push(block);
             },
@@ -75,10 +82,10 @@
 
                 switch (direction) {
                     case 'up':
-                        blockIndex = (game.controls.currentIndex - game.map.columns) - 1;
+                        blockIndex = (game.controls.currentIndex - game.map.columns);
                         break;
                     case 'down':
-                        blockIndex = (game.controls.currentIndex + game.map.columns) + 1;
+                        blockIndex = (game.controls.currentIndex + game.map.columns);
                         break;
                     case 'left':
                         blockIndex = game.controls.currentIndex - 1;
@@ -90,7 +97,7 @@
 
                 return game.map.blocks[blockIndex];
             },
-            get: function get () {
+            get: function getMap () {
                 var request = new XMLHttpRequest();
                 request.open('GET', 'room.map', true);
 
@@ -101,15 +108,17 @@
 
                         document.getElementById('loading').remove();
 
-                        var rows = response.split("\n");
-                        game.map.rows = rows.length;
+                        var rows = response.split("\n"),
+                            index = 0;
+
+                        game.map.columns = rows[0].length;
 
                         for (var i = 0; i < rows.length; i++) {
                             var columns = rows[i].split("");
-                            game.map.columns = columns.length;
 
                             for (var j = 0; j < columns.length; j++) {
-                                game.map.createBlock(columns[j], i, j);
+                                game.map.createBlock(columns[j], index);
+                                index++;
                             }
                         }
 
@@ -117,12 +126,12 @@
                         game.canvas.paint();
                     }
                     else {
-                        alert('Could not access map');
+                        document.getElementById('loading').innerHTML = 'Could not access map.';
                     }
                 };
 
                 request.onerror = function() {
-                    alert('Could not access map');
+                    document.getElementById('loading').innerHTML = 'Could not access map.';
                 };
 
                 request.send();
@@ -133,7 +142,7 @@
             init: function init () {
                 document.addEventListener('keydown', game.controls.keyboardListener);
             },
-            changePosition(direction) {
+            changePosition: function changePosition (direction) {
                 var directionBlock = game.map.getBlock(direction);
 
                 if (directionBlock.type != "wall") {
