@@ -1,4 +1,4 @@
-/* -------- ASCII Game ---------- 
+/* -------- ASCII Game ----------
     Created by Tony Gustafsson
 */
 
@@ -54,43 +54,41 @@
                         switch (character) {
                             case "#":
                                 return "wall";
-                                break;
                             case "V":
                                 return "object";
-                                break;
                             case "X":
-                                game.controls.currentColumn = column;
-                                game.controls.currentRow = row;
                                 game.controls.currentIndex = game.map.blocks.length;
                                 return "you";
-                                break;
                             default:
                                 return "space";
                         }
                     })(),
                     row: row,
-                    column: column
+                    column: column,
+                    index: (game.map.columns * row) + column
                 }
 
                 game.map.blocks.push(block);
             },
-            getBlockIndex: function getTopBlock (index, direction) {
+            getBlock: function getBlock (direction) {
+                var blockIndex = 0;
+
                 switch (direction) {
-                    case 'top':
-                        var position = index - game.map.columns - 1;
-                        return position;
-                    case 'bottom':
-                        var position = index + game.map.columns + 1;
-                        return position;
+                    case 'up':
+                        blockIndex = (game.controls.currentIndex - game.map.columns) - 1;
+                        break;
+                    case 'down':
+                        blockIndex = (game.controls.currentIndex + game.map.columns) + 1;
+                        break;
                     case 'left':
-                        var position = index - 1;
-                        return position;
+                        blockIndex = game.controls.currentIndex - 1;
+                        break;
                     case 'right':
-                        var position = index + 1;
-                        return position;
+                        blockIndex = game.controls.currentIndex + 1;
+                        break;
                 }
 
-                return false;
+                return game.map.blocks[blockIndex];
             },
             get: function get () {
                 var request = new XMLHttpRequest();
@@ -131,83 +129,42 @@
             }
         },
         controls: {
-            currentColumn: 0,
-            currentRow: 0,
             currentIndex: 0,
             init: function init () {
-                document.addEventListener('keydown', game.controls.changePosition);
+                document.addEventListener('keydown', game.controls.keyboardListener);
             },
-            changePosition: function changePosition (e) {
+            changePosition(direction) {
+                var directionBlock = game.map.getBlock(direction);
+
+                if (directionBlock.type != "wall") {
+                    directionBlock.character = "X";
+
+                    var currentBlock = game.map.blocks[game.controls.currentIndex];
+                    currentBlock.character = " ";
+
+                    game.controls.currentIndex = directionBlock.index;
+                }
+            },
+            keyboardListener: function keyboardListener (e) {
                 switch (e.keyCode) {
                     case 38:
-                        console.log('up');
-                        var topBlockIndex = game.map.getBlockIndex(game.controls.currentIndex, 'top'),
-                            topBlock = game.map.blocks[topBlockIndex];
-
-                        if (topBlock.type != "wall") {
-                            var positionBlock = game.map.blocks[game.controls.currentIndex];
-                            topBlock.character = "X";
-                            positionBlock.character = " ";
-                            game.controls.currentRow = topBlock.row;
-                            game.controls.currentColumn = topBlock.column;
-                            game.controls.currentIndex = topBlockIndex;
-
-                            game.canvas.paint();
-                        }
+                        game.controls.changePosition('up');
+                        game.canvas.paint();
 
                         break;
                     case 40:
-                        console.log('down');
-
-                        var bottomBlockIndex = game.map.getBlockIndex(game.controls.currentIndex, 'bottom'),
-                            bottomBlock = game.map.blocks[bottomBlockIndex];
-
-                        if (bottomBlock.type != "wall") {
-                            var positionBlock = game.map.blocks[game.controls.currentIndex];
-                            bottomBlock.character = "X";
-                            positionBlock.character = " ";
-                            game.controls.currentRow = bottomBlock.row;
-                            game.controls.currentColumn = bottomBlock.column;
-                            game.controls.currentIndex = bottomBlockIndex;
-
-                            game.canvas.paint();
-                        }
+                        game.controls.changePosition('down');
+                        game.canvas.paint();
 
                         break;
                     case 37:
-                        console.log('left');
-
-                        var leftBlockIndex = game.map.getBlockIndex(game.controls.currentIndex, 'left'),
-                            leftBlock = game.map.blocks[leftBlockIndex];
-
-                        if (leftBlock.type != "wall") {
-                            var positionBlock = game.map.blocks[game.controls.currentIndex];
-                            leftBlock.character = "X";
-                            positionBlock.character = " ";
-                            game.controls.currentRow = leftBlock.row;
-                            game.controls.currentColumn = leftBlock.column;
-                            game.controls.currentIndex = leftBlockIndex;
-
-                            game.canvas.paint();
-                        }
+                        game.controls.changePosition('left');
+                        game.canvas.paint();
 
                         break;
                     case 39:
-                        console.log('right');
-
-                        var rightBlockIndex = game.map.getBlockIndex(game.controls.currentIndex, 'right'),
-                            rightBlock = game.map.blocks[rightBlockIndex];
-
-                        if (rightBlock.type != "wall") {
-                            var positionBlock = game.map.blocks[game.controls.currentIndex];
-                            rightBlock.character = "X";
-                            positionBlock.character = " ";
-                            game.controls.currentRow = rightBlock.row;
-                            game.controls.currentColumn = rightBlock.column;
-                            game.controls.currentIndex = rightBlockIndex;
-
-                            game.canvas.paint();
-                        }
+                        game.controls.changePosition('right');
+                        game.canvas.paint();
 
                         break;
                 }
