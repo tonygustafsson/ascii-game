@@ -36,6 +36,8 @@
 
                 canvas.characterImage.src = 'img/characters/character1.png';
                 canvas.characterImage.onload = canvas.paint;
+                canvas.characterRightImage.src = 'img/characters/character1-right.png';
+                canvas.characterRightImage.onload = canvas.paint;
 
                 canvas.wallImage.src = 'img/walls/wall1.jpg';
                 canvas.wallImage.onload = canvas.paint;
@@ -95,7 +97,7 @@
                     setTimeout(function (x, y) {
                         return function () {
                             game.canvas.context.clearRect(x, y - game.map.blockSize, game.map.blockSize, game.map.blockSize);
-                            game.canvas.context.fillText("X", x, y);
+                            game.canvas.context.drawImage(game.canvas.characterImage, posX, posY, game.map.blockSize, game.map.blockSize);
                         };
                     }(game.controls.position.x, game.controls.position.y), speed);
                     
@@ -108,6 +110,7 @@
             },
             groundImage: new Image(),
             characterImage: new Image(),
+            characterRightImage: new Image(),
             wallImage: new Image(),
             objectImage: new Image(),
             paint: function paint () {
@@ -138,7 +141,12 @@
                         game.canvas.context.drawImage(game.canvas.objectImage, posX, posY, game.map.blockSize, game.map.blockSize);
                     }
                     else if (block.type == "you") {
-                        game.canvas.context.drawImage(game.canvas.characterImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                        if (game.controls.position.lastDirection == "right") {
+                            game.canvas.context.drawImage(game.canvas.characterRightImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                        }
+                        else {
+                            game.canvas.context.drawImage(game.canvas.characterImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                        }
                     }
                     else {
                         game.canvas.context.fillStyle = "limegreen";
@@ -256,7 +264,8 @@
                 row: 0,
                 column: 0,
                 x: 0,
-                y: 0
+                y: 0,
+                lastDirection: 'left'
             },
             changePosition: function changePosition (direction) {
                 var controls = this;
@@ -274,11 +283,15 @@
                 currentBlock.character = " ";
                 currentBlock.type = "space";
 
+                if (direction == "left" || direction == "right") {
+                    controls.position.lastDirection = direction;
+                }
+
                 controls.position.index = directionBlock.index;
                 controls.position.row = directionBlock.row();
                 controls.position.column = directionBlock.column();      
 
-                // game.canvas.move(direction);       
+                //game.canvas.move(direction);       
             },
             keyboardListener: function keyboardListener (e) {
                 var controls = game.controls;
