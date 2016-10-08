@@ -28,9 +28,7 @@
 
                 game.controls.position.x = Math.floor(game.controls.position.column * game.map.blockSize);
                 game.controls.position.y = Math.floor(game.controls.position.row * game.map.blockSize);
-
-                document.getElementsByTagName('h1')[0].style.fontSize = game.map.blockSize + "px";
-                
+              
                 canvas.groundImage.src = 'img/grounds/ground1.jpg';
                 canvas.groundImage.onload = canvas.paint;
 
@@ -48,7 +46,7 @@
                 game.canvas.context.font = game.map.blockSize + "px monospace";
             },
             move: function move (direction) {
-                var speed = 10,
+                var speed = 3,
                     destinationPosY = game.controls.position.y,
                     destinationPosX = game.controls.position.x,
                     expression = null,
@@ -95,13 +93,13 @@
                     doAfter();
 
                     setTimeout(function (x, y) {
-                        return function () {
-                            game.canvas.context.clearRect(x, y - game.map.blockSize, game.map.blockSize, game.map.blockSize);
-                            game.canvas.context.drawImage(game.canvas.characterImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                        return function () {                        
+                            game.canvas.context.drawImage(game.canvas.groundImage, x, y, game.map.blockSize, game.map.blockSize);
+                            game.canvas.context.drawImage(game.canvas.characterImage, x, y, game.map.blockSize, game.map.blockSize);
                         };
                     }(game.controls.position.x, game.controls.position.y), speed);
                     
-                    speed += 10;
+                    speed += 3;
                 }
 
                 setTimeout(function () {
