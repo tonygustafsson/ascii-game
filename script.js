@@ -22,11 +22,72 @@
                 game.canvas.context.canvas.height = canvas.height;
 
                 game.map.blockSize = Math.floor(game.canvas.width / game.map.columns);
+
+                game.controls.position.x = Math.floor(game.controls.position.column * game.map.blockSize);
+                game.controls.position.y = Math.floor(game.controls.position.row * (game.map.blockSize * 1.5));
+
                 game.canvas.context.translate(0, game.map.blockSize);
                 document.getElementsByTagName('h1')[0].style.fontSize = game.map.blockSize + "px";
 
                 game.canvas.context.font = game.map.blockSize + "px monospace";
                 game.canvas.context.fillStyle = "limegreen";
+            },
+            move: function move (direction) {
+                var speed = 10;
+
+                if (direction == 'up') {
+                        var destinationPosY = game.controls.position.y - game.map.blockSize,
+                            expression = function () {
+                                return game.controls.position.y > destinationPosY;
+                            },
+                            doAfter = function () {
+                                game.controls.position.y--;
+                            };
+                }
+                else if (direction == 'down') {
+                        var destinationPosY = game.controls.position.y + game.map.blockSize,
+                            expression = function () {
+                                return game.controls.position.y < destinationPosY;
+                            },
+                            doAfter = function () {
+                                game.controls.position.y++;
+                            };
+                }
+                else if (direction == 'left') {
+                        var destinationPosX = game.controls.position.x - game.map.blockSize,
+                            expression = function () {
+                                return game.controls.position.x > destinationPosX;
+                            },
+                            doAfter = function () {
+                                game.controls.position.x--;
+                            };
+                }
+                else if (direction == 'right') {
+                        var destinationPosX = game.controls.position.x + game.map.blockSize,
+                            expression = function () {
+                                return game.controls.position.x < destinationPosX;
+                            },
+                            doAfter = function () {
+                                game.controls.position.x++;
+                            };
+                }
+
+                while (expression()) {
+                    doAfter();
+
+                    setTimeout(function (x, y) {
+                        return function () {
+                            game.canvas.context.clearRect(x, y - game.map.blockSize, game.map.blockSize, game.map.blockSize);
+                            game.canvas.context.fillText("X", x, y);
+                        };
+                    }(game.controls.position.x, game.controls.position.y), speed);
+                    
+                    speed += 10;
+                }
+
+                setTimeout(function () {
+                    game.canvas.paint();
+                }, speed);
             },
             paint: function paint() {
                 var canvas = this;
@@ -49,6 +110,9 @@
             rows: 0,
             columns: 0,
             createBlock: function createBlock (character, index) {
+                var row = Math.floor(index / game.map.columns),
+                    column = Math.floor(index % game.map.columns);
+
                 var block = {
                     character: character,
                     type: (function () {
@@ -58,7 +122,10 @@
                             case "V":
                                 return "object";
                             case "X":
-                                game.controls.currentIndex = game.map.blocks.length;
+                                game.controls.position.index = game.map.blocks.length;
+                                game.controls.position.row = row;
+                                game.controls.position.column = column;
+
                                 return "you";
                             default:
                                 return "space";
@@ -66,11 +133,11 @@
                     })(),
                     row: function getRow () {
                         // Get current row index
-                        return Math.floor(index / game.map.columns);
+                        return row
                     },
                     column: function getColumn () {
                         // Get current column index on it's own row with modulus
-                        return Math.floor(index % game.map.columns);
+                        return column;
                     },
                     index: index
                 };
@@ -82,16 +149,16 @@
 
                 switch (direction) {
                     case 'up':
-                        blockIndex = (game.controls.currentIndex - game.map.columns);
+                        blockIndex = (game.controls.position.index - game.map.columns);
                         break;
                     case 'down':
-                        blockIndex = (game.controls.currentIndex + game.map.columns);
+                        blockIndex = (game.controls.position.index + game.map.columns);
                         break;
                     case 'left':
-                        blockIndex = game.controls.currentIndex - 1;
+                        blockIndex = game.controls.position.index - 1;
                         break;
                     case 'right':
-                        blockIndex = game.controls.currentIndex + 1;
+                        blockIndex = game.controls.position.index + 1;
                         break;
                 }
 
@@ -138,43 +205,52 @@
             }
         },
         controls: {
-            currentIndex: 0,
             init: function init () {
                 document.addEventListener('keydown', game.controls.keyboardListener);
             },
+            position: {
+                index: 0,
+                row: 0,
+                column: 0,
+                x: 0,
+                y: 0
+            },
             changePosition: function changePosition (direction) {
+                var controls = this;
                 var directionBlock = game.map.getBlock(direction);
 
                 if (directionBlock.type != "wall") {
                     directionBlock.character = "X";
 
-                    var currentBlock = game.map.blocks[game.controls.currentIndex];
+                    var currentBlock = game.map.blocks[controls.position.index];
                     currentBlock.character = " ";
 
-                    game.controls.currentIndex = directionBlock.index;
+                   controls.position.index = directionBlock.index;
+                   controls.position.row = directionBlock.row();
+                   controls.position.column = directionBlock.column();      
+
+                  // game.canvas.move(direction);       
                 }
             },
             keyboardListener: function keyboardListener (e) {
+                var controls = game.controls;
+
                 switch (e.keyCode) {
                     case 38:
                         game.controls.changePosition('up');
                         game.canvas.paint();
-
                         break;
                     case 40:
                         game.controls.changePosition('down');
                         game.canvas.paint();
-
                         break;
                     case 37:
                         game.controls.changePosition('left');
                         game.canvas.paint();
-
                         break;
                     case 39:
                         game.controls.changePosition('right');
                         game.canvas.paint();
-
                         break;
                 }
             }
