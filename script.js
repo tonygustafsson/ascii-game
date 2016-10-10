@@ -10,40 +10,77 @@
             game.map.get();
             game.controls.init();
         },
-        canvas: {
-            context: document.getElementById('game-canvas').getContext("2d"),
+        mapCanvas: {
+            context: document.getElementById('map-canvas').getContext("2d"),
             width: Math.floor(window.innerWidth * 0.95),
             height: Math.floor(window.innerHeight * 0.8),
             init: function initCanvas() {
                 /* Initialize the canvas, set the width and height */
                 var canvas = this;
 
-                game.map.blockSize = Math.floor(game.canvas.width / game.map.columns);
+                game.map.blockSize = Math.floor(canvas.width / game.map.columns);
 
                 canvas.width = (game.map.columns * game.map.blockSize) - game.map.blockSize;
                 canvas.height = game.map.rows * game.map.blockSize;
 
-                game.canvas.context.canvas.width  = canvas.width;
-                game.canvas.context.canvas.height = canvas.height;
+                document.getElementById('canvas-container').style.width = canvas.width + "px";
+                document.getElementById('canvas-container').style.height = canvas.height + "px";
+
+                canvas.context.canvas.width  = canvas.width;
+                canvas.context.canvas.height = canvas.height;
 
                 game.controls.position.x = Math.floor(game.controls.position.column * game.map.blockSize);
                 game.controls.position.y = Math.floor(game.controls.position.row * game.map.blockSize);
-              
-                canvas.groundImage.src = 'img/grounds/ground1.jpg';
-                canvas.groundImage.onload = canvas.paint;
+            },
+            paint: function paint () {
+                console.log('Repainting map.');
+                game.mapCanvas.context.clearRect(0, 0, game.mapCanvas.width, game.mapCanvas.height);
 
-                canvas.characterImage.src = 'img/characters/character1.png';
-                canvas.characterImage.onload = canvas.paint;
-                canvas.characterRightImage.src = 'img/characters/character1-right.png';
-                canvas.characterRightImage.onload = canvas.paint;
+                var groundPattern = game.mapCanvas.context.createPattern(game.images.handlers.ground, 'repeat');
+                game.mapCanvas.context.rect(0, 0, game.mapCanvas.width, game.mapCanvas.height);
+                game.mapCanvas.context.fillStyle = groundPattern;
+                game.mapCanvas.context.fill();
 
-                canvas.wallImage.src = 'img/walls/wall1.jpg';
-                canvas.wallImage.onload = canvas.paint;
+                game.mapCanvas.paintBlocks();
+            },
+            paintBlocks: function paintBlocks() {
+                var canvas = this;
 
-                canvas.objectImage.src = 'img/objects/object1.gif';
-                canvas.objectImage.onload = canvas.paint;
+                var wallPattern = game.mapCanvas.context.createPattern(game.images.handlers.wall, 'repeat');
 
-                game.canvas.context.font = game.map.blockSize + "px monospace";
+                for (var i = 0; i < game.map.blocks.length; i++) {
+                    var block = game.map.blocks[i],
+                        posX = Math.floor(block.column() * game.map.blockSize),
+                        posY = Math.floor(block.row() * game.map.blockSize);
+
+                    if (block.type == "wall") {
+                        game.mapCanvas.context.fillStyle = wallPattern;
+                        game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize);
+                    }
+                    else if (block.type == "object") {
+                        game.mapCanvas.context.drawImage(game.images.handlers.object, posX, posY, game.map.blockSize, game.map.blockSize);
+                    }
+                }
+            }
+        },
+        charactersCanvas: {
+            context: document.getElementById('characters-canvas').getContext("2d"),
+            width: Math.floor(window.innerWidth * 0.95),
+            height: Math.floor(window.innerHeight * 0.8),
+            init: function initCanvas() {
+                /* Initialize the canvas, set the width and height */
+                var canvas = this;
+
+                canvas.width = (game.map.columns * game.map.blockSize) - game.map.blockSize;
+                canvas.height = game.map.rows * game.map.blockSize;
+
+                canvas.context.canvas.width  = canvas.width;
+                canvas.context.canvas.height = canvas.height;
+
+                game.controls.position.x = Math.floor(game.controls.position.column * game.map.blockSize);
+                game.controls.position.y = Math.floor(game.controls.position.row * game.map.blockSize);
+
+                game.images.init();
             },
             move: function move (direction) {
                 var speed = 3,
@@ -93,62 +130,39 @@
                     doAfter();
 
                     setTimeout(function (x, y) {
-                        return function () {                        
-                            game.canvas.context.drawImage(game.canvas.groundImage, x, y, game.map.blockSize, game.map.blockSize);
-                            game.canvas.context.drawImage(game.canvas.characterImage, x, y, game.map.blockSize, game.map.blockSize);
+                        return function () {
+                            game.charactersCanvas.context.drawImage(game.charactersCanvas.groundImage, x, y, game.map.blockSize, game.map.blockSize);
+                            game.charactersCanvas.context.drawImage(game.charactersCanvas.characterImage, x, y, game.map.blockSize, game.map.blockSize);
                         };
                     }(game.controls.position.x, game.controls.position.y), speed);
-                    
+
                     speed += 3;
                 }
 
                 setTimeout(function () {
-                    game.canvas.paint();
+                    game.charactersCanvas.paint();
                 }, speed);
             },
-            groundImage: new Image(),
             characterImage: new Image(),
             characterRightImage: new Image(),
-            wallImage: new Image(),
-            objectImage: new Image(),
-            paint: function paint () {
-                game.canvas.context.clearRect(0, 0, game.canvas.width, game.canvas.height);
-
-                var groundPattern = game.canvas.context.createPattern(game.canvas.groundImage, 'repeat');
-                game.canvas.context.rect(0, 0, game.canvas.width, game.canvas.height);
-                game.canvas.context.fillStyle = groundPattern;
-                game.canvas.context.fill();
-
-                game.canvas.paintBlocks();
-            },
-            paintBlocks: function paintBlocks() {
+            paint: function paint() {
                 var canvas = this;
 
-                var wallPattern = game.canvas.context.createPattern(game.canvas.wallImage, 'repeat');
+                console.log('Repainting characters.');
+                game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
 
                 for (var i = 0; i < game.map.blocks.length; i++) {
                     var block = game.map.blocks[i],
                         posX = Math.floor(block.column() * game.map.blockSize),
                         posY = Math.floor(block.row() * game.map.blockSize);
 
-                    if (block.type == "wall") {
-                        game.canvas.context.fillStyle = wallPattern;
-                        game.canvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize);
-                    }
-                    else if (block.type == "object") {
-                        game.canvas.context.drawImage(game.canvas.objectImage, posX, posY, game.map.blockSize, game.map.blockSize);
-                    }
-                    else if (block.type == "you") {
+                    if (block.type == "you") {
                         if (game.controls.position.lastDirection == "right") {
-                            game.canvas.context.drawImage(game.canvas.characterRightImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                            game.charactersCanvas.context.drawImage(game.images.handlers.characterRight, posX, posY, game.map.blockSize, game.map.blockSize);
                         }
                         else {
-                            game.canvas.context.drawImage(game.canvas.characterImage, posX, posY, game.map.blockSize, game.map.blockSize);
+                            game.charactersCanvas.context.drawImage(game.images.handlers.character, posX, posY, game.map.blockSize, game.map.blockSize);
                         }
-                    }
-                    else {
-                        game.canvas.context.fillStyle = "limegreen";
-                        game.canvas.context.fillText(block.character, posX, posY);
                     }
                 }
             }
@@ -239,7 +253,8 @@
                             }
                         }
 
-                        game.canvas.init();
+                        game.mapCanvas.init();
+                        game.charactersCanvas.init();
                     }
                     else {
                         document.getElementById('loading').innerHTML = 'Could not access map.';
@@ -252,6 +267,40 @@
 
                 request.send();
             }
+        },
+        images: {
+            init: function init () {
+                for (var name in this.sources) {
+                    if (!this.sources.hasOwnProperty(name)) return;
+
+                    this.numberOfImages++;
+
+                    var src = this.sources[name];
+
+                    this.handlers[name] = new Image();
+
+                    this.handlers[name].onload = function() {
+                        game.images.loadedImages++;
+
+                        if (game.images.loadedImages >= game.images.numberOfImages) {
+                            // Done loading all images
+                            game.mapCanvas.paint();
+                            game.charactersCanvas.paint();
+                        }
+                    };
+                    this.handlers[name].src = src;
+                }
+            },
+            handlers: [],
+            sources: {
+                ground: 'img/grounds/ground1.jpg',
+                wall: 'img/walls/wall1.jpg',
+                object: 'img/objects/object1.gif',
+                character: 'img/characters/character1.png',
+                characterRight: 'img/characters/character1-right.png'
+            },
+            numberOfImages: 0,
+            loadedImages: 0
         },
         controls: {
             init: function init () {
@@ -287,9 +336,9 @@
 
                 controls.position.index = directionBlock.index;
                 controls.position.row = directionBlock.row();
-                controls.position.column = directionBlock.column();      
+                controls.position.column = directionBlock.column();
 
-                //game.canvas.move(direction);       
+                //game.mapCanvas.move(direction);
             },
             keyboardListener: function keyboardListener (e) {
                 var controls = game.controls;
@@ -297,19 +346,19 @@
                 switch (e.keyCode) {
                     case 38:
                         game.controls.changePosition('up');
-                        game.canvas.paint();
+                        game.charactersCanvas.paint();
                         break;
                     case 40:
                         game.controls.changePosition('down');
-                        game.canvas.paint();
+                        game.charactersCanvas.paint();
                         break;
                     case 37:
                         game.controls.changePosition('left');
-                        game.canvas.paint();
+                        game.charactersCanvas.paint();
                         break;
                     case 39:
                         game.controls.changePosition('right');
-                        game.canvas.paint();
+                        game.charactersCanvas.paint();
                         break;
                 }
             }

@@ -9,9 +9,16 @@ body {
     color: #fff;
 }
 
-.game-canvas {
+.canvas-container {
     display: block;
     margin: 0 auto;
+    position: relative;
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 h1 {
