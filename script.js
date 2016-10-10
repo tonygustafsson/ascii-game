@@ -270,35 +270,34 @@
         },
         images: {
             init: function init () {
-                for (var name in this.sources) {
-                    if (!this.sources.hasOwnProperty(name)) return;
-
+                for (var i = 0; i < this.sources.length; i++) {
                     this.numberOfImages++;
 
-                    var src = this.sources[name];
+                    var src = this.sources[i].src,
+                        name = this.sources[i].name;
 
                     this.handlers[name] = new Image();
-
-                    this.handlers[name].onload = function() {
-                        game.images.loadedImages++;
-
-                        if (game.images.loadedImages >= game.images.numberOfImages) {
-                            // Done loading all images
-                            game.mapCanvas.paint();
-                            game.charactersCanvas.paint();
-                        }
-                    };
+                    this.handlers[name].onload = this.onLoad;
                     this.handlers[name].src = src;
                 }
             },
-            handlers: [],
-            sources: {
-                ground: 'img/grounds/ground1.jpg',
-                wall: 'img/walls/wall1.jpg',
-                object: 'img/objects/object1.gif',
-                character: 'img/characters/character1.png',
-                characterRight: 'img/characters/character1-right.png'
+            onLoad: function onImageLoad () {
+                game.images.loadedImages++;
+
+                if (game.images.loadedImages >= game.images.numberOfImages) {
+                    // Done loading all images
+                    game.mapCanvas.paint();
+                    game.charactersCanvas.paint();
+                }
             },
+            handlers: [],
+            sources: [
+                { name: 'ground', 'src': 'img/grounds/ground1.jpg' },
+                { name: 'wall', 'src': 'img/walls/wall1.jpg' },
+                { name: 'object', 'src': 'img/objects/object1.gif' },
+                { name: 'character', 'src': 'img/characters/character1.png' },
+                { name: 'characterRight', 'src': 'img/characters/character1-right.png' }
+            ],
             numberOfImages: 0,
             loadedImages: 0
         },
