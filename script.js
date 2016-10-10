@@ -131,8 +131,14 @@
 
                     setTimeout(function (x, y) {
                         return function () {
-                            game.charactersCanvas.context.drawImage(game.charactersCanvas.groundImage, x, y, game.map.blockSize, game.map.blockSize);
-                            game.charactersCanvas.context.drawImage(game.charactersCanvas.characterImage, x, y, game.map.blockSize, game.map.blockSize);
+                            game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
+                            
+                            if (game.controls.position.lastDirection == "right") {
+                                game.charactersCanvas.context.drawImage(game.images.handlers.characterRight, x, y, game.map.blockSize, game.map.blockSize);
+                            }
+                            else {
+                                game.charactersCanvas.context.drawImage(game.images.handlers.character, x, y, game.map.blockSize, game.map.blockSize);
+                            }
                         };
                     }(game.controls.position.x, game.controls.position.y), speed);
 
@@ -337,7 +343,7 @@
                 controls.position.row = directionBlock.row();
                 controls.position.column = directionBlock.column();
 
-                //game.mapCanvas.move(direction);
+                game.charactersCanvas.move(direction);
             },
             keyboardListener: function keyboardListener (e) {
                 var controls = game.controls;
@@ -345,19 +351,15 @@
                 switch (e.keyCode) {
                     case 38:
                         game.controls.changePosition('up');
-                        game.charactersCanvas.paint();
                         break;
                     case 40:
                         game.controls.changePosition('down');
-                        game.charactersCanvas.paint();
                         break;
                     case 37:
                         game.controls.changePosition('left');
-                        game.charactersCanvas.paint();
                         break;
                     case 39:
                         game.controls.changePosition('right');
-                        game.charactersCanvas.paint();
                         break;
                 }
             }
