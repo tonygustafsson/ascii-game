@@ -28,9 +28,6 @@
 
                 canvas.context.canvas.width  = canvas.width;
                 canvas.context.canvas.height = canvas.height;
-
-                game.controls.position.x = Math.floor(game.controls.position.column * game.map.blockSize);
-                game.controls.position.y = Math.floor(game.controls.position.row * game.map.blockSize);
             },
             paint: function paint () {
                 console.log('Repainting map.');
@@ -82,95 +79,54 @@
 
                 game.images.init();
             },
-            move: function move (direction) {
-                var speed = 3,
-                    destinationPosY = game.controls.position.y,
-                    destinationPosX = game.controls.position.x,
-                    expression = null,
-                    doAfter = null;
+            move: function move (destinationPosX, destinationPosY) {
+                game.controls.pauseKeyboardListener = true;
+                var moveRate = 4;
 
-                if (direction == 'up') {
-                    destinationPosY = game.controls.position.y - game.map.blockSize;
-                    expression = function () {
-                        return game.controls.position.y > destinationPosY;
-                    };
-                    doAfter = function () {
-                        game.controls.position.y--;
-                    };
+                if (game.controls.position.x == destinationPosX && game.controls.position.y == destinationPosY) {
+                    game.controls.pauseKeyboardListener = false;
+                    return;
                 }
-                else if (direction == 'down') {
-                    destinationPosY = game.controls.position.y + game.map.blockSize;
-                    expression = function () {
-                        return game.controls.position.y < destinationPosY;
-                    };
-                    doAfter = function () {
-                        game.controls.position.y++;
-                    };
+                else if (game.controls.position.x > destinationPosX) {
+                    // Left
+                    game.controls.position.x -= moveRate;
+                    game.controls.position.x = (game.controls.position.x - destinationPosX < moveRate) ? destinationPosX : game.controls.position.x;
                 }
-                else if (direction == 'left') {
-                    destinationPosX = game.controls.position.x - game.map.blockSize;
-                    expression = function () {
-                        return game.controls.position.x > destinationPosX;
-                    };
-                    doAfter = function () {
-                        game.controls.position.x--;
-                    };
+                else if (game.controls.position.x < destinationPosX) {
+                    // Right
+                    game.controls.position.x += moveRate;
+                    game.controls.position.x = (destinationPosX - game.controls.position.x < moveRate) ? destinationPosX : game.controls.position.x;
                 }
-                else if (direction == 'right') {
-                    destinationPosX = game.controls.position.x + game.map.blockSize;
-                    expression = function () {
-                        return game.controls.position.x < destinationPosX;
-                    };
-                    doAfter = function () {
-                        game.controls.position.x++;
-                    };
+                else if (game.controls.position.y > destinationPosY) {
+                    // Up
+                    game.controls.position.y -= moveRate;
+                    game.controls.position.y = (game.controls.position.y - destinationPosY < moveRate) ? destinationPosY : game.controls.position.y;
+                }
+                else if (game.controls.position.y < destinationPosY) {
+                    // Down
+                    game.controls.position.y += moveRate;
+                    game.controls.position.y = (destinationPosY - game.controls.position.y < moveRate) ? destinationPosY : game.controls.position.y;
                 }
 
-                while (expression()) {
-                    doAfter();
+                game.charactersCanvas.paintCharacter(game.controls.position.x, game.controls.position.y);
 
-                    setTimeout(function (x, y) {
-                        return function () {
-                            game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
-                            
-                            if (game.controls.position.lastDirection == "right") {
-                                game.charactersCanvas.context.drawImage(game.images.handlers.characterRight, x, y, game.map.blockSize, game.map.blockSize);
-                            }
-                            else {
-                                game.charactersCanvas.context.drawImage(game.images.handlers.character, x, y, game.map.blockSize, game.map.blockSize);
-                            }
-                        };
-                    }(game.controls.position.x, game.controls.position.y), speed);
-
-                    speed += 3;
-                }
-
-                setTimeout(function () {
-                    game.charactersCanvas.paint();
-                }, speed);
+                requestAnimationFrame(function () {
+                    game.charactersCanvas.move(destinationPosX, destinationPosY);
+                });
             },
-            characterImage: new Image(),
-            characterRightImage: new Image(),
-            paint: function paint() {
-                var canvas = this;
+            paintCharacter: function moveCharacter (x, y) {
+                console.log('Repainting character at ' + x + ' x ' + y);
 
-                console.log('Repainting characters.');
+                // Set default if not used for animation
+                x = (typeof x === "undefined") ? game.controls.position.x : x;
+                y = (typeof y === "undefined") ? game.controls.position.y : y;
+
+                // Clear character canvas
                 game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
 
-                for (var i = 0; i < game.map.blocks.length; i++) {
-                    var block = game.map.blocks[i],
-                        posX = Math.floor(block.column() * game.map.blockSize),
-                        posY = Math.floor(block.row() * game.map.blockSize);
-
-                    if (block.type == "you") {
-                        if (game.controls.position.lastDirection == "right") {
-                            game.charactersCanvas.context.drawImage(game.images.handlers.characterRight, posX, posY, game.map.blockSize, game.map.blockSize);
-                        }
-                        else {
-                            game.charactersCanvas.context.drawImage(game.images.handlers.character, posX, posY, game.map.blockSize, game.map.blockSize);
-                        }
-                    }
-                }
+                // Paint character
+                var characterImage = (game.controls.position.lastDirection == "right") ? game.images.handlers.characterRight : game.images.handlers.character;
+                game.charactersCanvas.context.drawImage(characterImage, x, y, game.map.blockSize, game.map.blockSize);
             }
         },
         map: {
@@ -293,7 +249,7 @@
                 if (game.images.loadedImages >= game.images.numberOfImages) {
                     // Done loading all images
                     game.mapCanvas.paint();
-                    game.charactersCanvas.paint();
+                    game.charactersCanvas.paintCharacter();
                 }
             },
             handlers: [],
@@ -328,13 +284,6 @@
                     return;
                 }
 
-                directionBlock.character = "X";
-                directionBlock.type = "you";
-
-                var currentBlock = game.map.blocks[controls.position.index];
-                currentBlock.character = " ";
-                currentBlock.type = "space";
-
                 if (direction == "left" || direction == "right") {
                     controls.position.lastDirection = direction;
                 }
@@ -343,10 +292,33 @@
                 controls.position.row = directionBlock.row();
                 controls.position.column = directionBlock.column();
 
-                game.charactersCanvas.move(direction);
+                var destinationPosX = game.controls.position.x,
+                    destinationPosY = game.controls.position.y;
+
+                switch (direction) {
+                    case "left":
+                        destinationPosX = Math.floor(game.controls.position.x - game.map.blockSize);
+                        break;
+                    case "right":
+                        destinationPosX = Math.floor(game.controls.position.x + game.map.blockSize);
+                        break;
+                    case "up":
+                        destinationPosY = Math.floor(game.controls.position.y - game.map.blockSize);
+                        break;
+                    case "down":
+                        destinationPosY = Math.floor(game.controls.position.y + game.map.blockSize);
+                        break;
+                }
+
+                // Animation
+                game.charactersCanvas.move(destinationPosX, destinationPosY);
             },
+            pauseKeyboardListener: false,
             keyboardListener: function keyboardListener (e) {
                 var controls = game.controls;
+
+                // Avoid simulatinous movements
+                if (game.controls.pauseKeyboardListener) return;
 
                 switch (e.keyCode) {
                     case 38:
