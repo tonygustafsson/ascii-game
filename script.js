@@ -58,6 +58,25 @@
                         game.mapCanvas.context.drawImage(game.images.handlers.object, posX, posY, game.map.blockSize, game.map.blockSize);
                     }
                 }
+            },
+            pixelIsAccessable: function pixelIsAccessable (x, y) {
+                var column = Math.floor(x / game.map.blockSize),
+                    row = Math.floor(y / game.map.blockSize),
+                    index = (row * game.map.columns) + column,
+                    block = game.map.blocks[index];
+
+                //var row = Math.floor(index / game.map.columns),
+                //    column = Math.floor(index % game.map.columns);
+
+                if (block.type == "wall" || block.type == "object") {
+                    var x = block.column() * game.map.blockSize,
+                        y = block.row() * game.map.blockSize;
+
+                    game.mapCanvas.context.fillStyle = "red";
+                    game.mapCanvas.context.fillRect(x, y, game.map.blockSize, game.map.blockSize);
+                }
+
+                return block.type != "wall" && block.type != "object";
             }
         },
         charactersCanvas: {
@@ -79,54 +98,50 @@
 
                 game.images.init();
             },
-            move: function move (destinationPosX, destinationPosY) {
-                game.controls.pauseKeyboardListener = true;
-                var moveRate = 4;
+            moveListener: function moveListener () {
+                var originalPositionX = game.controls.position.x,
+                    originalPositionY = game.controls.position.y,
+                    speed = 4;
 
-                if (game.controls.position.x == destinationPosX && game.controls.position.y == destinationPosY) {
-                    game.controls.pauseKeyboardListener = false;
+                if (!game.controls.rightKeyActive && !game.controls.leftKeyActive && !game.controls.upKeyActive && !game.controls.downKeyActive) {
+                    requestAnimationFrame(game.charactersCanvas.moveListener);
                     return;
                 }
-                else if (game.controls.position.x > destinationPosX) {
-                    // Left
-                    game.controls.position.x -= moveRate;
-                    game.controls.position.x = (game.controls.position.x - destinationPosX < moveRate) ? destinationPosX : game.controls.position.x;
+
+                if (game.controls.rightKeyActive) {
+                    game.controls.position.x += speed;
+                    game.controls.position.lastDirection = 'right';
                 }
-                else if (game.controls.position.x < destinationPosX) {
-                    // Right
-                    game.controls.position.x += moveRate;
-                    game.controls.position.x = (destinationPosX - game.controls.position.x < moveRate) ? destinationPosX : game.controls.position.x;
+                if (game.controls.downKeyActive) {
+                    game.controls.position.y += speed;
                 }
-                else if (game.controls.position.y > destinationPosY) {
-                    // Up
-                    game.controls.position.y -= moveRate;
-                    game.controls.position.y = (game.controls.position.y - destinationPosY < moveRate) ? destinationPosY : game.controls.position.y;
+                if (game.controls.leftKeyActive) {
+                    game.controls.position.x -= speed;
+                    game.controls.position.lastDirection = 'left';
                 }
-                else if (game.controls.position.y < destinationPosY) {
-                    // Down
-                    game.controls.position.y += moveRate;
-                    game.controls.position.y = (destinationPosY - game.controls.position.y < moveRate) ? destinationPosY : game.controls.position.y;
+                if (game.controls.upKeyActive) {
+                    game.controls.position.y -= speed;
                 }
 
-                game.charactersCanvas.paintCharacter(game.controls.position.x, game.controls.position.y);
+                if (!game.mapCanvas.pixelIsAccessable(game.controls.position.x, game.controls.position.y)) {
+                    // Avoid walls and stuff
+                    game.controls.position.x = originalPositionX;
+                    game.controls.position.y = originalPositionY;
+                }
 
-                requestAnimationFrame(function () {
-                    game.charactersCanvas.move(destinationPosX, destinationPosY);
-                });
+                console.log('Redrawing character');
+
+                game.charactersCanvas.paintCharacter();
+
+                requestAnimationFrame(game.charactersCanvas.moveListener);
             },
-            paintCharacter: function moveCharacter (x, y) {
-                console.log('Repainting character at ' + x + ' x ' + y);
-
-                // Set default if not used for animation
-                x = (typeof x === "undefined") ? game.controls.position.x : x;
-                y = (typeof y === "undefined") ? game.controls.position.y : y;
-
+            paintCharacter: function paintCharacter () {
                 // Clear character canvas
                 game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
 
                 // Paint character
                 var characterImage = (game.controls.position.lastDirection == "right") ? game.images.handlers.characterRight : game.images.handlers.character;
-                game.charactersCanvas.context.drawImage(characterImage, x, y, game.map.blockSize, game.map.blockSize);
+                game.charactersCanvas.context.drawImage(characterImage, game.controls.position.x, game.controls.position.y, game.map.blockSize, game.map.blockSize);
             }
         },
         map: {
@@ -250,6 +265,7 @@
                     // Done loading all images
                     game.mapCanvas.paint();
                     game.charactersCanvas.paintCharacter();
+                    game.charactersCanvas.moveListener();
                 }
             },
             handlers: [],
@@ -265,73 +281,51 @@
         },
         controls: {
             init: function init () {
-                document.addEventListener('keydown', game.controls.keyboardListener);
+                document.addEventListener('keydown', game.controls.keyboardDownListener);
+                document.addEventListener('keyup', game.controls.keyboardUpListener);
             },
             position: {
-                index: 0,
-                row: 0,
-                column: 0,
                 x: 0,
                 y: 0,
                 lastDirection: 'left'
             },
-            changePosition: function changePosition (direction) {
-                var controls = this;
-                var directionBlock = game.map.getBlock(direction);
-
-                if (directionBlock.type == "wall" || directionBlock.type == "object") {
-                    // Do not walk through objects
-                    return;
-                }
-
-                if (direction == "left" || direction == "right") {
-                    controls.position.lastDirection = direction;
-                }
-
-                controls.position.index = directionBlock.index;
-                controls.position.row = directionBlock.row();
-                controls.position.column = directionBlock.column();
-
-                var destinationPosX = game.controls.position.x,
-                    destinationPosY = game.controls.position.y;
-
-                switch (direction) {
-                    case "left":
-                        destinationPosX = Math.floor(game.controls.position.x - game.map.blockSize);
-                        break;
-                    case "right":
-                        destinationPosX = Math.floor(game.controls.position.x + game.map.blockSize);
-                        break;
-                    case "up":
-                        destinationPosY = Math.floor(game.controls.position.y - game.map.blockSize);
-                        break;
-                    case "down":
-                        destinationPosY = Math.floor(game.controls.position.y + game.map.blockSize);
-                        break;
-                }
-
-                // Animation
-                game.charactersCanvas.move(destinationPosX, destinationPosY);
-            },
-            pauseKeyboardListener: false,
-            keyboardListener: function keyboardListener (e) {
+            upKeyActive: false,
+            downKeyActive: false,
+            leftKeyActive: false,
+            rightKeyActive: false,
+            keyboardDownListener: function keyboardDownListener (e) {
                 var controls = game.controls;
-
-                // Avoid simulatinous movements
-                if (game.controls.pauseKeyboardListener) return;
 
                 switch (e.keyCode) {
                     case 38:
-                        game.controls.changePosition('up');
+                        game.controls.upKeyActive = true;
                         break;
                     case 40:
-                        game.controls.changePosition('down');
+                        game.controls.downKeyActive = true;
                         break;
                     case 37:
-                        game.controls.changePosition('left');
+                        game.controls.leftKeyActive = true;
                         break;
                     case 39:
-                        game.controls.changePosition('right');
+                        game.controls.rightKeyActive = true;
+                        break;
+                }
+            },
+            keyboardUpListener: function keyboardUpListener (e) {
+                var controls = game.controls;
+
+                switch (e.keyCode) {
+                    case 38:
+                        game.controls.upKeyActive = false;
+                        break;
+                    case 40:
+                        game.controls.downKeyActive = false;
+                        break;
+                    case 37:
+                        game.controls.leftKeyActive = false;
+                        break;
+                    case 39:
+                        game.controls.rightKeyActive = false;
                         break;
                 }
             }
