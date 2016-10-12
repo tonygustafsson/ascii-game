@@ -50,6 +50,10 @@
                         posX = Math.floor(block.column() * game.map.blockSize),
                         posY = Math.floor(block.row() * game.map.blockSize);
 
+                   /* game.mapCanvas.context.strokeWidth = "2px";
+                    game.mapCanvas.context.strokeStyle = "green";
+                    game.mapCanvas.context.strokeRect(posX, posY, game.map.blockSize, game.map.blockSize); */
+
                     if (block.type == "wall") {
                         game.mapCanvas.context.fillStyle = wallPattern;
                         game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize);
@@ -62,19 +66,23 @@
             pixelIsAccessable: function pixelIsAccessable (x, y) {
                 var column = Math.floor(x / game.map.blockSize),
                     row = Math.floor(y / game.map.blockSize),
-                    index = (row * game.map.columns) + column,
-                    block = game.map.blocks[index];
+                    index = (row * game.map.columns) + column;                    
 
-                //var row = Math.floor(index / game.map.columns),
-                //    column = Math.floor(index % game.map.columns);
-
-                if (block.type == "wall" || block.type == "object") {
-                    var x = block.column() * game.map.blockSize,
-                        y = block.row() * game.map.blockSize;
-
-                    game.mapCanvas.context.fillStyle = "red";
-                    game.mapCanvas.context.fillRect(x, y, game.map.blockSize, game.map.blockSize);
+                if (game.controls.downKeyActive) {
+                    index += game.map.columns;
                 }
+                if (game.controls.rightKeyActive) {
+                    index += 1;
+                }
+
+                var block = game.map.blocks[index];
+
+                /* 
+                var posX = Math.floor(block.column() * game.map.blockSize),
+                    posY = Math.floor(block.row() * game.map.blockSize);   
+
+                game.mapCanvas.context.fillStyle = "red";
+                game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize); */
 
                 return block.type != "wall" && block.type != "object";
             }
@@ -101,7 +109,7 @@
             moveListener: function moveListener () {
                 var originalPositionX = game.controls.position.x,
                     originalPositionY = game.controls.position.y,
-                    speed = 4;
+                    speed = 3;
 
                 if (!game.controls.rightKeyActive && !game.controls.leftKeyActive && !game.controls.upKeyActive && !game.controls.downKeyActive) {
                     requestAnimationFrame(game.charactersCanvas.moveListener);
