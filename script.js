@@ -91,6 +91,11 @@
             context: document.getElementById('characters-canvas').getContext("2d"),
             width: Math.floor(window.innerWidth * 0.95),
             height: Math.floor(window.innerHeight * 0.8),
+            spriteAnimation: {
+                row: 3,
+                totalSprites: 40,
+                currentSprite: 0
+            },
             init: function initCanvas() {
                 /* Initialize the canvas, set the width and height */
                 var canvas = this;
@@ -118,6 +123,13 @@
 
                 if (game.controls.rightKeyActive) {
                     game.controls.position.x += speed;
+
+                    game.charactersCanvas.spriteAnimation.row = 1;
+                    game.charactersCanvas.spriteAnimation.currentSprite--;
+                    if (game.charactersCanvas.spriteAnimation.currentSprite < 0) {
+                        game.charactersCanvas.spriteAnimation.currentSprite = game.charactersCanvas.spriteAnimation.totalSprites;
+                    }
+
                     game.controls.position.lastDirection = 'right';
                 }
                 if (game.controls.downKeyActive) {
@@ -125,6 +137,13 @@
                 }
                 if (game.controls.leftKeyActive) {
                     game.controls.position.x -= speed;
+                    
+                    game.charactersCanvas.spriteAnimation.row = 3;
+                    game.charactersCanvas.spriteAnimation.currentSprite++;
+                    if (game.charactersCanvas.spriteAnimation.currentSprite > game.charactersCanvas.spriteAnimation.totalSprites) {
+                        game.charactersCanvas.spriteAnimation.currentSprite = 0;
+                    }
+
                     game.controls.position.lastDirection = 'left';
                 }
                 if (game.controls.upKeyActive) {
@@ -145,11 +164,28 @@
             },
             paintCharacter: function paintCharacter () {
                 // Clear character canvas
+                var spriteSize = 280,
+                    characterSize = Math.floor(spriteSize / 4),
+                    characterPosX = Math.floor(game.charactersCanvas.spriteAnimation.currentSprite / 10) * characterSize,
+                    characterPosY = Math.floor(game.charactersCanvas.spriteAnimation.row * characterSize);
+
                 game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
 
                 // Paint character
-                var characterImage = (game.controls.position.lastDirection == "right") ? game.images.handlers.characterRight : game.images.handlers.character;
-                game.charactersCanvas.context.drawImage(characterImage, game.controls.position.x, game.controls.position.y, game.map.blockSize, game.map.blockSize);
+                //var characterImage = (game.controls.position.lastDirection == "right") ? game.images.handlers.characterRight : game.images.handlers.character;
+                var characterImage = game.images.handlers.characterSprite;
+
+                game.charactersCanvas.context.drawImage(
+                    characterImage,
+                    characterPosX,
+                    characterPosY,
+                    characterSize,
+                    characterSize,
+                    game.controls.position.x,
+                    game.controls.position.y,
+                    game.map.blockSize,
+                    game.map.blockSize
+                );
             }
         },
         map: {
@@ -282,7 +318,8 @@
                 { name: 'wall', 'src': 'img/walls/wall1.jpg' },
                 { name: 'object', 'src': 'img/objects/object1.gif' },
                 { name: 'character', 'src': 'img/characters/character1.png' },
-                { name: 'characterRight', 'src': 'img/characters/character1-right.png' }
+                { name: 'characterRight', 'src': 'img/characters/character1-right.png' },
+                { name: 'characterSprite', 'src': 'img/characters/character1-sprite.png' }
             ],
             numberOfImages: 0,
             loadedImages: 0
