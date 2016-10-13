@@ -66,7 +66,7 @@
             pixelIsAccessable: function pixelIsAccessable (x, y) {
                 var column = Math.floor(x / game.map.blockSize),
                     row = Math.floor(y / game.map.blockSize),
-                    index = (row * game.map.columns) + column;                    
+                    index = (row * game.map.columns) + column;
 
                 if (game.controls.downKeyActive) {
                     index += game.map.columns;
@@ -77,9 +77,9 @@
 
                 var block = game.map.blocks[index];
 
-                /* 
+                /*
                 var posX = Math.floor(block.column() * game.map.blockSize),
-                    posY = Math.floor(block.row() * game.map.blockSize);   
+                    posY = Math.floor(block.row() * game.map.blockSize);
 
                 game.mapCanvas.context.fillStyle = "red";
                 game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize); */
@@ -91,11 +91,6 @@
             context: document.getElementById('characters-canvas').getContext("2d"),
             width: Math.floor(window.innerWidth * 0.95),
             height: Math.floor(window.innerHeight * 0.8),
-            spriteAnimation: {
-                row: 3,
-                totalSprites: 40,
-                currentSprite: 0
-            },
             init: function initCanvas() {
                 /* Initialize the canvas, set the width and height */
                 var canvas = this;
@@ -123,31 +118,29 @@
 
                 if (game.controls.rightKeyActive) {
                     game.controls.position.x += speed;
-
-                    game.charactersCanvas.spriteAnimation.row = 1;
-                    game.charactersCanvas.spriteAnimation.currentSprite--;
-                    if (game.charactersCanvas.spriteAnimation.currentSprite < 0) {
-                        game.charactersCanvas.spriteAnimation.currentSprite = game.charactersCanvas.spriteAnimation.totalSprites;
-                    }
-
+                    game.images.characterSprite.row = 2;
                     game.controls.position.lastDirection = 'right';
                 }
                 if (game.controls.downKeyActive) {
                     game.controls.position.y += speed;
+                    game.images.characterSprite.row = 0;
                 }
                 if (game.controls.leftKeyActive) {
                     game.controls.position.x -= speed;
-                    
-                    game.charactersCanvas.spriteAnimation.row = 3;
-                    game.charactersCanvas.spriteAnimation.currentSprite++;
-                    if (game.charactersCanvas.spriteAnimation.currentSprite > game.charactersCanvas.spriteAnimation.totalSprites) {
-                        game.charactersCanvas.spriteAnimation.currentSprite = 0;
-                    }
-
+                    game.images.characterSprite.row = 1;
                     game.controls.position.lastDirection = 'left';
                 }
                 if (game.controls.upKeyActive) {
                     game.controls.position.y -= speed;
+                    game.images.characterSprite.row = 3;
+                }
+
+                game.images.characterSprite.pixelMovementIndex++;
+
+                if (game.images.characterSprite.pixelMovementIndex >= game.images.characterSprite.pixelMovementBeforeChange) {
+                    // Change character sprite
+                    game.images.characterSprite.column = (game.images.characterSprite.column < game.images.characterSprite.totalColumns) ? game.images.characterSprite.column + 1 : 0;
+                    game.images.characterSprite.pixelMovementIndex = 0;
                 }
 
                 if (!game.mapCanvas.pixelIsAccessable(game.controls.position.x, game.controls.position.y)) {
@@ -164,23 +157,18 @@
             },
             paintCharacter: function paintCharacter () {
                 // Clear character canvas
-                var spriteSize = 280,
-                    characterSize = Math.floor(spriteSize / 4),
-                    characterPosX = Math.floor(game.charactersCanvas.spriteAnimation.currentSprite / 10) * characterSize,
-                    characterPosY = Math.floor(game.charactersCanvas.spriteAnimation.row * characterSize);
+                var characterPosX = Math.floor(game.images.characterSprite.column * game.images.characterSprite.spriteWidth),
+                    characterPosY = Math.floor(game.images.characterSprite.row * game.images.characterSprite.spriteHeight);
 
                 game.charactersCanvas.context.clearRect(0, 0, game.charactersCanvas.width, game.charactersCanvas.height);
 
                 // Paint character
-                //var characterImage = (game.controls.position.lastDirection == "right") ? game.images.handlers.characterRight : game.images.handlers.character;
-                var characterImage = game.images.handlers.characterSprite;
-
                 game.charactersCanvas.context.drawImage(
-                    characterImage,
+                    game.images.handlers.characterSprite,
                     characterPosX,
                     characterPosY,
-                    characterSize,
-                    characterSize,
+                    game.images.characterSprite.spriteWidth,
+                    game.images.characterSprite.spriteHeight,
                     game.controls.position.x,
                     game.controls.position.y,
                     game.map.blockSize,
@@ -312,13 +300,22 @@
                     game.charactersCanvas.moveListener();
                 }
             },
+            characterSprite: {
+                row: 1,
+                column: 0,
+                totalColumns: 2,
+                pixelMovementIndex: 0, // highter is slower
+                pixelMovementBeforeChange: 10, // highter is slower
+                spriteWidth: 24,
+                spriteHeight: 24,
+                imageWidth: 72,
+                imageHeight: 92
+            },
             handlers: [],
             sources: [
                 { name: 'ground', 'src': 'img/grounds/ground1.jpg' },
                 { name: 'wall', 'src': 'img/walls/wall1.jpg' },
                 { name: 'object', 'src': 'img/objects/object1.gif' },
-                { name: 'character', 'src': 'img/characters/character1.png' },
-                { name: 'characterRight', 'src': 'img/characters/character1-right.png' },
                 { name: 'characterSprite', 'src': 'img/characters/character1-sprite.png' }
             ],
             numberOfImages: 0,
