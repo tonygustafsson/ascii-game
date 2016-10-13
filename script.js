@@ -306,10 +306,10 @@
                 totalColumns: 2,
                 pixelMovementIndex: 0, // highter is slower
                 pixelMovementBeforeChange: 10, // highter is slower
-                spriteWidth: 24,
-                spriteHeight: 24,
-                imageWidth: 72,
-                imageHeight: 92
+                spriteWidth: 48,
+                spriteHeight: 48,
+                imageWidth: 144,
+                imageHeight: 192
             },
             handlers: [],
             sources: [
