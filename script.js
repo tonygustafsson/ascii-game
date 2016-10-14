@@ -9,6 +9,7 @@
         init: function init () {
             game.map.get();
             game.controls.init();
+            game.audio.init();
         },
         mapCanvas: {
             context: document.getElementById('map-canvas').getContext("2d"),
@@ -50,16 +51,15 @@
                         posX = Math.floor(block.column() * game.map.blockSize),
                         posY = Math.floor(block.row() * game.map.blockSize);
 
-                   /* game.mapCanvas.context.strokeWidth = "2px";
-                    game.mapCanvas.context.strokeStyle = "green";
-                    game.mapCanvas.context.strokeRect(posX, posY, game.map.blockSize, game.map.blockSize); */
-
                     if (block.type == "wall") {
                         game.mapCanvas.context.fillStyle = wallPattern;
                         game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize);
                     }
-                    else if (block.type == "object") {
-                        game.mapCanvas.context.drawImage(game.images.handlers.object, posX, posY, game.map.blockSize, game.map.blockSize);
+                    else if (block.type == "bush") {
+                        game.mapCanvas.context.drawImage(game.images.handlers.bush, posX, posY, game.map.blockSize, game.map.blockSize);
+                    }
+                    else if (block.type == "box") {
+                        game.mapCanvas.context.drawImage(game.images.handlers.box, posX, posY, game.map.blockSize, game.map.blockSize);
                     }
                 }
             },
@@ -68,23 +68,9 @@
                     row = Math.floor(y / game.map.blockSize),
                     index = (row * game.map.columns) + column;
 
-                if (game.controls.downKeyActive) {
-                    index += game.map.columns;
-                }
-                if (game.controls.rightKeyActive) {
-                    index += 1;
-                }
-
                 var block = game.map.blocks[index];
 
-                /*
-                var posX = Math.floor(block.column() * game.map.blockSize),
-                    posY = Math.floor(block.row() * game.map.blockSize);
-
-                game.mapCanvas.context.fillStyle = "red";
-                game.mapCanvas.context.fillRect(posX, posY, game.map.blockSize, game.map.blockSize); */
-
-                return block.type != "wall" && block.type != "object";
+                return block.type != "wall" && block.type != "bush" && block.type != "box";
             }
         },
         charactersCanvas: {
@@ -169,8 +155,8 @@
                     characterPosY,
                     game.images.characterSprite.spriteWidth,
                     game.images.characterSprite.spriteHeight,
-                    game.controls.position.x,
-                    game.controls.position.y,
+                    game.controls.position.x - Math.floor(game.map.blockSize / 2), // Position fix
+                    game.controls.position.y - Math.floor(game.map.blockSize / 1.5), // Position fix
                     game.map.blockSize,
                     game.map.blockSize
                 );
@@ -192,7 +178,9 @@
                             case "#":
                                 return "wall";
                             case "V":
-                                return "object";
+                                return "bush";
+                            case "B":
+                                return "box";
                             case "X":
                                 game.controls.position.index = game.map.blocks.length;
                                 game.controls.position.row = row;
@@ -245,7 +233,8 @@
                         // Success!
                         var response = this.response;
 
-                        document.getElementById('loading').remove();
+                        var loading = document.getElementById('loading');
+                        document.getElementById('article').removeChild(loading);
 
                         var rows = response.split("\n"),
                             index = 0;
@@ -314,8 +303,9 @@
             handlers: [],
             sources: [
                 { name: 'ground', 'src': 'img/grounds/ground1.jpg' },
-                { name: 'wall', 'src': 'img/walls/wall1.jpg' },
-                { name: 'object', 'src': 'img/objects/object1.gif' },
+                { name: 'wall', 'src': 'img/walls/wall2.jpg' },
+                { name: 'bush', 'src': 'img/objects/bush.gif' },
+                { name: 'box', 'src': 'img/objects/box.gif' },
                 { name: 'characterSprite', 'src': 'img/characters/character1-sprite.png' }
             ],
             numberOfImages: 0,
@@ -340,15 +330,19 @@
 
                 switch (e.keyCode) {
                     case 38:
+                        e.preventDefault();
                         game.controls.upKeyActive = true;
                         break;
                     case 40:
+                        e.preventDefault();
                         game.controls.downKeyActive = true;
                         break;
                     case 37:
+                        e.preventDefault();
                         game.controls.leftKeyActive = true;
                         break;
                     case 39:
+                        e.preventDefault();
                         game.controls.rightKeyActive = true;
                         break;
                 }
@@ -358,18 +352,29 @@
 
                 switch (e.keyCode) {
                     case 38:
+                        e.preventDefault();
                         game.controls.upKeyActive = false;
                         break;
                     case 40:
+                        e.preventDefault();
                         game.controls.downKeyActive = false;
                         break;
                     case 37:
+                        e.preventDefault();
                         game.controls.leftKeyActive = false;
                         break;
                     case 39:
+                        e.preventDefault();
                         game.controls.rightKeyActive = false;
                         break;
                 }
+            }
+        },
+        audio: {
+            init: function init () {
+                var audio = document.getElementById('audio');
+                audio.volume=.5;
+                audio.play();
             }
         }
     };

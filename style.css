@@ -24,3 +24,12 @@ body {
 h1 {
     text-align: center;
 }
+
+audio {
+    margin: 10px auto;
+    display: block;
+}
+
+::-webkit-media-controls-panel {
+    background: #000;
+}
