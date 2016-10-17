@@ -1,0 +1,16 @@
+{
+    "globals": {
+        "audio": true,
+        "controls": true,
+        "images": true,
+        "map": true,
+        "charactersCanvas": true,
+        "mapCanvas": true,
+        "document": true,
+        "window": true,
+        "console": true,
+        "XMLHttpRequest": true,
+        "Image": true,
+        "requestAnimationFrame": true
+    }
+}
