@@ -20,17 +20,18 @@ var mapCanvas = {
         mapCanvas.context.canvas.width  = mapCanvas.width;
         mapCanvas.context.canvas.height = mapCanvas.height;
     },
-    paint: function paint () {
-        mapCanvas.context.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+    paint: function paint(firstPaint) {
+        if (!firstPaint) {
+            // Repaint outside of canvas
+            //mapCanvas.context.translate(mapCanvas.width, mapCanvas.height);
+        }
 
+        // Ground
         var groundPattern = mapCanvas.context.createPattern(images.handlers.ground, 'repeat');
         mapCanvas.context.rect(0, 0, mapCanvas.width, mapCanvas.height);
         mapCanvas.context.fillStyle = groundPattern;
         mapCanvas.context.fill();
 
-        mapCanvas.paintBlocks();
-    },
-    paintBlocks: function paintBlocks() {
         var wallPattern = mapCanvas.context.createPattern(images.handlers.wall, 'repeat');
 
         for (var i = 0; i < map.blocks.length; i++) {
@@ -48,6 +49,10 @@ var mapCanvas = {
             else if (block.type == "box") {
                 mapCanvas.context.drawImage(images.handlers.box, posX, posY, map.blockSize, map.blockSize);
             }
+        }
+
+        if (!firstPaint) {
+
         }
     },
     getBlockFromPixel: function getBlockFromPixel (x, y) {

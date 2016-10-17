@@ -2,9 +2,6 @@
 
 var images = {
     init: function init () {
-        images.numberOfImages = 0;
-        images.loadedImages = 0;
-
         for (var i = 0; i < this.sources.length; i++) {
             this.numberOfImages++;
 
@@ -21,10 +18,12 @@ var images = {
 
         if (images.loadedImages >= images.numberOfImages) {
             // Done loading all images
-            mapCanvas.paint();
+            mapCanvas.paint(images.firstRun);
             charactersCanvas.paintCharacter();
+            images.firstRun = false;
         }
     },
+    firstRun: true,
     characterSprite: {
         row: 1,
         column: 0,
