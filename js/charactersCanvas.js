@@ -62,10 +62,16 @@ var charactersCanvas = {
         var directionBlock = mapCanvas.getBlockFromPixel(controls.position.x, controls.position.y);
 
         if (directionBlock.type == "right") {
-            map.changeMap("right");
+            if (!map.changeMap("right")) {
+                controls.position.x = originalPositionX;
+                controls.position.y = originalPositionY;
+            }
         }
         else if (directionBlock.type == "left") {
-            map.changeMap("left");
+            if (!map.changeMap("left")) {
+                controls.position.x = originalPositionX;
+                controls.position.y = originalPositionY;
+            }
         }
         else if (directionBlock.type == "wall" || directionBlock.type == "bush" || directionBlock.type == "box") {
             // Avoid walls and stuff

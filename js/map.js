@@ -125,6 +125,11 @@ var map = {
             mapX++;
         }
 
+        if (mapX > 1 || mapY > 0) {
+            // Map does not exist!
+            return false;
+        }
+
         var mapId = mapX + "-" + mapY;
         map.currentMap = mapId;
         map.get();
