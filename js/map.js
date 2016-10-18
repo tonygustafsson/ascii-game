@@ -113,6 +113,7 @@ var map = {
 
         request.send();
     },
+    lastDirection: null,
     changeMap: function changeMap (direction) {
         var mapPosition = map.currentMap.split("-"),
             mapX = mapPosition[0],
@@ -130,6 +131,8 @@ var map = {
             return false;
         }
 
+        map.lastDirection = direction;
+        
         var mapId = mapX + "-" + mapY;
         map.currentMap = mapId;
         map.get();

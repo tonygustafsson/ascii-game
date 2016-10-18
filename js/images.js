@@ -18,12 +18,10 @@ var images = {
 
         if (images.loadedImages >= images.numberOfImages) {
             // Done loading all images
-            mapCanvas.paint(images.firstRun);
+            mapCanvas.paint();
             charactersCanvas.paintCharacter();
-            images.firstRun = false;
         }
     },
-    firstRun: true,
     characterSprite: {
         row: 1,
         column: 0,

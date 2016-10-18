@@ -27,23 +27,21 @@ var mapCanvas = {
     paint: function paint(firstPaint) {
         var context = mapCanvas.context;
 
-        function test (e, f) {
-            debugger;
-        }
-
-        if (!firstPaint) {
+        if (map.lastDirection !== null) {
             // Repaint outside of canvas
-            var canvas = document.createElement('canvas');
+            var canvas = document.createElement('canvas'),
+                leftPosition = map.lastDirection == "left" ? (0 - mapCanvas.width) + "px" : mapCanvas.width + "px";
+
             canvas.width = mapCanvas.width;
             canvas.height = mapCanvas.height;
-            canvas.style.left = canvas.width + "px";
+            canvas.style.left = leftPosition;
             canvas.classList.add("canvas");
 
             setTimeout(function () {
                 // Slide the new canvas in with CSS transition
                 canvas.style.left = "0";
                 canvas.id = "map-canvas";
-            }, 1);
+            }, 100);
 
             canvas.addEventListener('transitionend', mapCanvas.removeOldCanvas);
 
