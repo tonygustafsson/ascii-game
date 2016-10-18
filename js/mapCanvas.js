@@ -17,22 +17,48 @@ var mapCanvas = {
         document.getElementById('canvas-container').style.width = mapCanvas.width + "px";
         document.getElementById('canvas-container').style.height = mapCanvas.height + "px";
 
-        mapCanvas.context.canvas.width  = mapCanvas.width;
-        mapCanvas.context.canvas.height = mapCanvas.height;
+        if (mapCanvas.context.canvas.width !== mapCanvas.width) {
+            mapCanvas.context.canvas.width  = mapCanvas.width;
+        }
+        if (mapCanvas.context.canvas.height !== mapCanvas.height) {
+            mapCanvas.context.canvas.height = mapCanvas.height;
+        }
     },
     paint: function paint(firstPaint) {
+        var context = mapCanvas.context;
+
+        function test (e, f) {
+            debugger;
+        }
+
         if (!firstPaint) {
             // Repaint outside of canvas
-            //mapCanvas.context.translate(mapCanvas.width, mapCanvas.height);
+            var canvas = document.createElement('canvas');
+            canvas.width = mapCanvas.width;
+            canvas.height = mapCanvas.height;
+            canvas.style.left = canvas.width + "px";
+            canvas.classList.add("canvas");
+
+            setTimeout(function () {
+                // Slide the new canvas in with CSS transition
+                canvas.style.left = "0";
+                canvas.id = "map-canvas";
+            }, 1);
+
+            canvas.addEventListener('transitionend', mapCanvas.removeOldCanvas);
+
+            document.getElementById('canvas-container').appendChild(canvas);
+
+            context = canvas.getContext("2d");
         }
 
         // Ground
-        var groundPattern = mapCanvas.context.createPattern(images.handlers.ground, 'repeat');
-        mapCanvas.context.rect(0, 0, mapCanvas.width, mapCanvas.height);
-        mapCanvas.context.fillStyle = groundPattern;
-        mapCanvas.context.fill();
+        var groundPattern = context.createPattern(images.handlers.ground, 'repeat');
+        context.rect(0, 0, mapCanvas.width, mapCanvas.height);
+        context.fillStyle = groundPattern;
+        context.fill();
 
-        var wallPattern = mapCanvas.context.createPattern(images.handlers.wall, 'repeat');
+        var wallPattern = context.createPattern(images.handlers.wall, 'repeat');
 
         for (var i = 0; i < map.blocks.length; i++) {
             var block = map.blocks[i],
@@ -40,19 +66,24 @@ var mapCanvas = {
                 posY = Math.floor(block.row() * map.blockSize);
 
             if (block.type == "wall") {
-                mapCanvas.context.fillStyle = wallPattern;
-                mapCanvas.context.fillRect(posX, posY, map.blockSize, map.blockSize);
+                context.fillStyle = wallPattern;
+                context.fillRect(posX, posY, map.blockSize, map.blockSize);
             }
             else if (block.type == "bush") {
-                mapCanvas.context.drawImage(images.handlers.bush, posX, posY, map.blockSize, map.blockSize);
+                context.drawImage(images.handlers.bush, posX, posY, map.blockSize, map.blockSize);
             }
             else if (block.type == "box") {
-                mapCanvas.context.drawImage(images.handlers.box, posX, posY, map.blockSize, map.blockSize);
+                context.drawImage(images.handlers.box, posX, posY, map.blockSize, map.blockSize);
             }
         }
+    },
+    removeOldCanvas: function removeOldCanvas (e) {
+        var property = e.propertyName;
 
-        if (!firstPaint) {
-
+        if (property == "left" || property == "right") {
+            // Remove old canvas after slidein, replace with new one
+            var oldCanvas = document.getElementById('map-canvas');
+            document.getElementById('canvas-container').removeChild(oldCanvas);
         }
     },
     getBlockFromPixel: function getBlockFromPixel (x, y) {

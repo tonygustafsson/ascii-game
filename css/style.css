@@ -13,12 +13,19 @@ body {
     display: block;
     margin: 0 auto;
     position: relative;
+    overflow: hidden;
 }
 
 .canvas {
     position: absolute;
     top: 0;
     left: 0;
+    transition: left .5s ease-out, right .5s ease-out;
+    z-index: 1;
+}
+
+.characters-canvas {
+    z-index: 2;
 }
 
 h1 {

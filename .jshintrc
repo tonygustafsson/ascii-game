@@ -11,6 +11,7 @@
         "console": true,
         "XMLHttpRequest": true,
         "Image": true,
-        "requestAnimationFrame": true
+        "requestAnimationFrame": true,
+        "setTimeout": true
     }
 }
