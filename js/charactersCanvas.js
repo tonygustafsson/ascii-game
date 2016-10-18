@@ -73,6 +73,18 @@ var charactersCanvas = {
                 controls.position.y = originalPositionY;
             }
         }
+        else if (directionBlock.type == "up") {
+            if (!map.changeMap("up")) {
+                controls.position.x = originalPositionX;
+                controls.position.y = originalPositionY;
+            }
+        }
+        else if (directionBlock.type == "down") {
+            if (!map.changeMap("down")) {
+                controls.position.x = originalPositionX;
+                controls.position.y = originalPositionY;
+            }
+        }
         else if (directionBlock.type == "wall" || directionBlock.type == "bush" || directionBlock.type == "box") {
             // Avoid walls and stuff
             controls.position.x = originalPositionX;

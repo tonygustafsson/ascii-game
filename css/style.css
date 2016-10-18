@@ -20,7 +20,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    transition: left .5s ease-out, right .5s ease-out;
+    transition: left .5s ease-out, top .5s ease-out;
     z-index: 1;
 }
 

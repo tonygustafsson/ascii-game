@@ -30,16 +30,24 @@ var mapCanvas = {
         if (map.lastDirection !== null) {
             // Repaint outside of canvas
             var canvas = document.createElement('canvas'),
-                leftPosition = map.lastDirection == "left" ? (0 - mapCanvas.width) + "px" : mapCanvas.width + "px";
+                leftPosition = 0,
+                topPosition = 0;
+
+            if (map.lastDirection == "left") leftPosition = (0 - mapCanvas.width) + "px";
+            else if (map.lastDirection == "right") leftPosition = mapCanvas.width + "px";
+            else if (map.lastDirection == "up") topPosition = (0 - mapCanvas.height) + "px";
+            else if (map.lastDirection == "down") topPosition = mapCanvas.height + "px";
 
             canvas.width = mapCanvas.width;
             canvas.height = mapCanvas.height;
             canvas.style.left = leftPosition;
+            canvas.style.top = topPosition;
             canvas.classList.add("canvas");
 
             setTimeout(function () {
                 // Slide the new canvas in with CSS transition
                 canvas.style.left = "0";
+                canvas.style.top = "0";
                 canvas.id = "map-canvas";
             }, 100);
 
@@ -78,7 +86,7 @@ var mapCanvas = {
     removeOldCanvas: function removeOldCanvas (e) {
         var property = e.propertyName;
 
-        if (property == "left" || property == "right") {
+        if (property == "left" || property == "top") {
             // Remove old canvas after slidein, replace with new one
             var oldCanvas = document.getElementById('map-canvas');
             document.getElementById('canvas-container').removeChild(oldCanvas);

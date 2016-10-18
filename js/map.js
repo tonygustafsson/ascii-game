@@ -30,6 +30,10 @@ var map = {
                         return "right";
                     case "L":
                         return "left";
+                    case "U":
+                        return "up";
+                    case "D":
+                        return "down";
                     default:
                         return "space";
                 }
@@ -125,14 +129,20 @@ var map = {
         else if (direction == "right") {
             mapX++;
         }
+        else if (direction == "up") {
+            mapY--;
+        }
+        else if (direction == "down") {
+            mapY++;
+        }
 
-        if (mapX > 1 || mapY > 0) {
+        if (mapX > 1 || mapY > 1) {
             // Map does not exist!
             return false;
         }
 
         map.lastDirection = direction;
-        
+
         var mapId = mapX + "-" + mapY;
         map.currentMap = mapId;
         map.get();
