@@ -85,7 +85,7 @@ var charactersCanvas = {
                 controls.position.y = originalPositionY;
             }
         }
-        else if (directionBlock.type == "wall" || directionBlock.type == "bush" || directionBlock.type == "box") {
+        else if (directionBlock.type == "wall" || directionBlock.type == "bush" || directionBlock.type == "box" || directionBlock.type == "water") {
             // Avoid walls and stuff
             controls.position.x = originalPositionX;
             controls.position.y = originalPositionY;

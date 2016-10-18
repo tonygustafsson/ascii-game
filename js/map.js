@@ -20,6 +20,8 @@ var map = {
                         return "bush";
                     case "B":
                         return "box";
+                    case "W":
+                        return "water";
                     case "X":
                         controls.position.index = map.blocks.length;
                         controls.position.row = row;

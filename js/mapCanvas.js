@@ -78,6 +78,9 @@ var mapCanvas = {
             else if (block.type == "bush") {
                 context.drawImage(images.handlers.bush, posX, posY, map.blockSize, map.blockSize);
             }
+            else if (block.type == "water") {
+                context.drawImage(images.handlers.water, posX, posY, map.blockSize, map.blockSize);
+            }
             else if (block.type == "box") {
                 context.drawImage(images.handlers.box, posX, posY, map.blockSize, map.blockSize);
             }

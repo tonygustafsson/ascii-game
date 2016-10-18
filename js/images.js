@@ -36,6 +36,7 @@ var images = {
     handlers: [],
     sources: [
         { name: 'ground', 'src': 'img/grounds/ground1.jpg' },
+        { name: 'water', 'src': 'img/grounds/water.png' },
         { name: 'wall', 'src': 'img/walls/wall2.jpg' },
         { name: 'bush', 'src': 'img/objects/bush.gif' },
         { name: 'box', 'src': 'img/objects/box.gif' },
