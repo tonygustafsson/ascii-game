@@ -119,6 +119,10 @@ var map = {
                 var rows = response.split("\n"),
                     index = 0;
 
+                // Get map settings from first line
+                map.setMapSettings(rows[0]);
+                rows.shift();
+
                 map.columns = rows[0].length;
                 map.rows = rows.length;
 
@@ -147,6 +151,21 @@ var map = {
         };
 
         request.send();
+    },
+    setMapSettings: function setMapSettings (settings) {
+        var settingsPairs = settings.split(";");
+
+        for (var i = 0; i < settingsPairs.length; i++) {
+            var thisSetting = settingsPairs[i].split(':');
+
+            for (var j = 0; j < thisSetting.length; j++) {
+                for (var k = 0; k < images.sources.length; k++) {
+                    if (images.sources[k].name == thisSetting[0]) {
+                        images.sources[k].src = thisSetting[1];
+                    }
+                }
+            }
+        }
     },
     lastDirection: null,
     changeMap: function changeMap (direction) {
