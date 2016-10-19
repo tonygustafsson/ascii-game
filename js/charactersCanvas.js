@@ -14,10 +14,11 @@ var charactersCanvas = {
         canvas.context.canvas.width  = canvas.width;
         canvas.context.canvas.height = canvas.height;
 
-        controls.position.x = Math.floor(controls.position.column * map.blockSize);
-        controls.position.y = Math.floor(controls.position.row * map.blockSize);
+        var newPosition = charactersCanvas.getNewPosition();
+        controls.position.x = newPosition.x;
+        controls.position.y = newPosition.y;
 
-        if (charactersCanvas.moveTimer == null) {
+        if (charactersCanvas.moveTimer === null) {
             charactersCanvas.moveListener();
         }
     },
@@ -40,6 +41,7 @@ var charactersCanvas = {
         if (controls.downKeyActive) {
             controls.position.y += speed;
             images.characterSprite.row = 0;
+            controls.position.lastDirection = 'down';
         }
         if (controls.leftKeyActive) {
             controls.position.x -= speed;
@@ -49,6 +51,7 @@ var charactersCanvas = {
         if (controls.upKeyActive) {
             controls.position.y -= speed;
             images.characterSprite.row = 3;
+            controls.position.lastDirection = 'up';
         }
 
         images.characterSprite.pixelMovementIndex++;
@@ -114,5 +117,32 @@ var charactersCanvas = {
             map.blockSize,
             map.blockSize
         );
+    },
+    getNewPosition: function getNewPosition () {
+        var x = 0,
+            y = 0;
+
+        switch (controls.position.lastDirection) {
+            case "right":
+                x = Math.floor(map.directionBlocks.left.column * map.blockSize) + map.blockSize;
+                y = Math.floor(map.directionBlocks.left.row * map.blockSize);
+
+                return { x: x, y: y };
+            case "left":
+                x = Math.floor(map.directionBlocks.right.column * map.blockSize) - map.blockSize;
+                y = Math.floor(map.directionBlocks.right.row * map.blockSize);
+
+                return { x: x, y: y };
+            case "up":
+                x = Math.floor(map.directionBlocks.down.column * map.blockSize);
+                y = Math.floor(map.directionBlocks.down.row * map.blockSize) - map.blockSize;
+
+                return { x: x, y: y };
+            case "down":
+                x = Math.floor(map.directionBlocks.up.column * map.blockSize);
+                y = Math.floor(map.directionBlocks.up.row * map.blockSize) + map.blockSize;
+
+                return { x: x, y: y };
+        }
     }
 };

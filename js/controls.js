@@ -6,6 +6,9 @@ var controls = {
         document.addEventListener('keyup', controls.keyboardUpListener);
     },
     position: {
+        index: null,
+        row: null,
+        column: null,
         x: 0,
         y: 0,
         lastDirection: 'left'

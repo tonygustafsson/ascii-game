@@ -6,6 +6,24 @@ var map = {
     blockSize: null,
     rows: 0,
     columns: 0,
+    directionBlocks: {
+        up: {
+            row: null,
+            column: null
+        },
+        down: {
+            row: null,
+            column: null
+        },
+        left: {
+            row: null,
+            column: null
+        },
+        right: {
+            row: null,
+            column: null
+        }
+    },
     createBlock: function createBlock (character, index) {
         var row = Math.floor(index / map.columns),
             column = Math.floor(index % map.columns);
@@ -23,18 +41,29 @@ var map = {
                     case "W":
                         return "water";
                     case "X":
-                        controls.position.index = map.blocks.length;
-                        controls.position.row = row;
-                        controls.position.column = column;
+                        if (controls.position.index === null) {
+                            // Set initial position
+                            controls.position.index = map.blocks.length;
+                            controls.position.row = row;
+                            controls.position.column = column;
+                        }
 
                         return "you";
                     case "R":
+                        map.directionBlocks.right.row = row;
+                        map.directionBlocks.right.column = column;
                         return "right";
                     case "L":
+                        map.directionBlocks.left.row = row;
+                        map.directionBlocks.left.column = column;
                         return "left";
                     case "U":
+                        map.directionBlocks.up.row = row;
+                        map.directionBlocks.up.column = column;
                         return "up";
                     case "D":
+                        map.directionBlocks.down.row = row;
+                        map.directionBlocks.down.column = column;
                         return "down";
                     default:
                         return "space";
@@ -138,7 +167,7 @@ var map = {
             mapY++;
         }
 
-        if (mapX > 1 || mapY > 1) {
+        if (mapX > 1 || mapY > 1 || mapX < 0 || mapY < 0) {
             // Map does not exist!
             return false;
         }
