@@ -25,6 +25,8 @@ var dialogCanvas = {
 
         dialogCanvas.element.addEventListener('click', dialogCanvas.toggle);
 
+        document.addEventListener('keydown', dialogCanvas.keyboardDownListener);
+
         dialogCanvas.paint();
     },
     paint: function paint () {
@@ -90,6 +92,16 @@ var dialogCanvas = {
         else {
             dialogCanvas.element.classList.remove('visible');
             controls.disableKeyPress = false;
+        }
+    },
+    keyboardDownListener: function keyboardDownListener (e) {
+        switch (e.keyCode) {
+            case 13:
+                if (dialogCanvas.visible) {
+                    dialogCanvas.toggle();
+                }
+
+                break;
         }
     }
 };

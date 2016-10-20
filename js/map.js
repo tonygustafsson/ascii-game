@@ -195,6 +195,7 @@ var map = {
 
         var mapId = mapX + "-" + mapY;
         map.currentMap = mapId;
+        controls.disableKeyPress = true;
         map.get();
     }
 };

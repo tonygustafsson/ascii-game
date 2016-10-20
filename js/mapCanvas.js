@@ -24,7 +24,7 @@ var mapCanvas = {
             mapCanvas.context.canvas.height = mapCanvas.height;
         }
     },
-    paint: function paint(firstPaint) {
+    paint: function paint() {
         var context = mapCanvas.context;
 
         if (map.lastDirection !== null) {
@@ -96,6 +96,8 @@ var mapCanvas = {
             // Remove old canvas after slidein, replace with new one
             var oldCanvas = document.getElementById('map-canvas');
             document.getElementById('canvas-container').removeChild(oldCanvas);
+
+            controls.disableKeyPress = false;
         }
     },
     getBlockFromPixel: function getBlockFromPixel (x, y) {
