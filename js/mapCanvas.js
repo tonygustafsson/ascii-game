@@ -57,6 +57,9 @@ var mapCanvas = {
 
             context = canvas.getContext("2d");
         }
+        else {
+            dialogCanvas.init();
+        }
 
         // Ground
         var groundPattern = context.createPattern(images.handlers.ground, 'repeat');

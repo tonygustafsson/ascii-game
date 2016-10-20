@@ -33,6 +33,13 @@ body {
     cursor: pointer;
     opacity: 0;
     transition: opacity .5s;
+    pointer-events: none;
+
+}
+
+.dialog-canvas.visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 h1 {

@@ -13,11 +13,16 @@ var controls = {
         y: 0,
         lastDirection: 'left'
     },
+    disableKeyPress: false,
     upKeyActive: false,
     downKeyActive: false,
     leftKeyActive: false,
     rightKeyActive: false,
     keyboardDownListener: function keyboardDownListener (e) {
+        if (controls.disableKeyPress) {
+            return;
+        }
+
         switch (e.keyCode) {
             case 38:
                 e.preventDefault();

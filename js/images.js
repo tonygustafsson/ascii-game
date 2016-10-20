@@ -20,7 +20,6 @@ var images = {
             // Done loading all images
             mapCanvas.paint();
             charactersCanvas.paintCharacter();
-            dialogCanvas.init();
         }
     },
     characterSprite: {
@@ -42,6 +41,7 @@ var images = {
         { name: 'bush', 'src': 'bush' },
         { name: 'box', 'src': 'box' },
         { name: 'dialogFrame', 'src': 'dialog-frame' },
+        { name: 'button', 'src': 'button' },
         { name: 'characterSprite', 'src': 'character1-sprite' }
     ],
     numberOfImages: 0,
