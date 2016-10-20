@@ -10,7 +10,7 @@ var images = {
 
             this.handlers[name] = new Image();
             this.handlers[name].onload = this.onLoad;
-            this.handlers[name].src = src;
+            this.handlers[name].src = 'img/' + src + '.png';
         }
     },
     onLoad: function onImageLoad () {
@@ -20,6 +20,7 @@ var images = {
             // Done loading all images
             mapCanvas.paint();
             charactersCanvas.paintCharacter();
+            dialogCanvas.init();
         }
     },
     characterSprite: {
@@ -35,12 +36,13 @@ var images = {
     },
     handlers: [],
     sources: [
-        { name: 'ground', 'src': 'img/grounds/ground1.jpg' },
-        { name: 'water', 'src': 'img/grounds/water.png' },
-        { name: 'wall', 'src': 'img/walls/wall2.jpg' },
-        { name: 'bush', 'src': 'img/objects/bush.gif' },
-        { name: 'box', 'src': 'img/objects/box.gif' },
-        { name: 'characterSprite', 'src': 'img/characters/character1-sprite.png' }
+        { name: 'ground', 'src': 'ground1' },
+        { name: 'water', 'src': 'water' },
+        { name: 'wall', 'src': 'wall2' },
+        { name: 'bush', 'src': 'bush' },
+        { name: 'box', 'src': 'box' },
+        { name: 'dialogFrame', 'src': 'dialog-frame' },
+        { name: 'characterSprite', 'src': 'character1-sprite' }
     ],
     numberOfImages: 0,
     loadedImages: 0
