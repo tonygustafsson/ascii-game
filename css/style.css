@@ -28,6 +28,13 @@ body {
     z-index: 2;
 }
 
+.dialog-canvas {
+    z-index: 3;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .5s;
+}
+
 h1 {
     text-align: center;
 }
