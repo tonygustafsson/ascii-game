@@ -28,27 +28,27 @@ var charactersCanvas = {
             originalPositionY = controls.position.y,
             speed = 3;
 
-        if (!controls.rightKeyActive && !controls.leftKeyActive && !controls.upKeyActive && !controls.downKeyActive) {
+        if (!controls.rightActive && !controls.leftActive && !controls.upActive && !controls.downActive) {
             requestAnimationFrame(charactersCanvas.moveListener);
             return;
         }
 
-        if (controls.rightKeyActive) {
+        if (controls.rightActive) {
             controls.position.x += speed;
             images.characterSprite.row = 2;
             controls.position.lastDirection = 'right';
         }
-        if (controls.downKeyActive) {
+        if (controls.downActive) {
             controls.position.y += speed;
             images.characterSprite.row = 0;
             controls.position.lastDirection = 'down';
         }
-        if (controls.leftKeyActive) {
+        if (controls.leftActive) {
             controls.position.x -= speed;
             images.characterSprite.row = 1;
             controls.position.lastDirection = 'left';
         }
-        if (controls.upKeyActive) {
+        if (controls.upActive) {
             controls.position.y -= speed;
             images.characterSprite.row = 3;
             controls.position.lastDirection = 'up';
