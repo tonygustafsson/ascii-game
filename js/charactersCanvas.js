@@ -99,10 +99,10 @@ var charactersCanvas = {
         charactersCanvas.moveTimer = requestAnimationFrame(charactersCanvas.moveListener);
     },
     paintCharacter: function paintCharacter () {
-        // Clear character canvas
         var characterPosX = Math.floor(images.characterSprite.column * images.characterSprite.spriteWidth),
             characterPosY = Math.floor(images.characterSprite.row * images.characterSprite.spriteHeight);
 
+        // Clear character canvas
         charactersCanvas.context.clearRect(0, 0, charactersCanvas.width, charactersCanvas.height);
 
         // Paint character

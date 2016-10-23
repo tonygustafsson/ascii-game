@@ -33,6 +33,17 @@ var images = {
         imageWidth: 144,
         imageHeight: 192
     },
+    swordSprite: {
+        row: 0,
+        column: 0,
+        totalColumns: 2,
+        pixelMovementIndex: 0, // highter is slower
+        pixelMovementBeforeChange: 10, // highter is slower
+        spriteWidth: 48,
+        spriteHeight: 48,
+        imageWidth: 144,
+        imageHeight: 48
+    },
     handlers: [],
     sources: [
         { name: 'ground', 'src': 'ground1' },
@@ -42,6 +53,7 @@ var images = {
         { name: 'box', 'src': 'box' },
         { name: 'dialogFrame', 'src': 'dialog-frame' },
         { name: 'button', 'src': 'button' },
+        { name: 'swordSprite', 'src': 'sword-sprite' },
         { name: 'characterSprite', 'src': 'character1-sprite' }
     ],
     numberOfImages: 0,

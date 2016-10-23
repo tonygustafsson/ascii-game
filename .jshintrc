@@ -5,6 +5,7 @@
         "images": true,
         "map": true,
         "charactersCanvas": true,
+        "swordCanvas": true,
         "dialogCanvas": true,
         "mapCanvas": true,
         "document": true,

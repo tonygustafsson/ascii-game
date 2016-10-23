@@ -18,6 +18,7 @@ var controls = {
     downKeyActive: false,
     leftKeyActive: false,
     rightKeyActive: false,
+    spaceKeyActive: false,
     keyboardDownListener: function keyboardDownListener (e) {
         if (controls.disableKeyPress) {
             return;
@@ -40,6 +41,10 @@ var controls = {
                 e.preventDefault();
                 controls.rightKeyActive = true;
                 break;
+            case 32:
+                e.preventDefault();
+                controls.spaceKeyActive = true;
+                break;
         }
     },
     keyboardUpListener: function keyboardUpListener (e) {
@@ -59,6 +64,10 @@ var controls = {
             case 39:
                 e.preventDefault();
                 controls.rightKeyActive = false;
+                break;
+            case 32:
+                e.preventDefault();
+                controls.spaceKeyActive = false;
                 break;
         }
     }

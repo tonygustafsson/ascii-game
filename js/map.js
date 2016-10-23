@@ -139,6 +139,7 @@ var map = {
 
                 mapCanvas.init();
                 charactersCanvas.init();
+                swordCanvas.init();
                 images.init();
             }
             else {
