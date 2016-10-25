@@ -93,11 +93,16 @@ var controls = {
         else if (touchPosY > downAreaLimit) {
             controls.downActive = true;
         }
+        else if (touchPosX > mapCanvas.position.left && touchPosX < mapCanvas.position.right && touchPosY > mapCanvas.position.top && touchPosY < mapCanvas.position.bottom) {
+            // Use sword if touch on canvas if not the edges
+            controls.spaceKeyActive = true;
+        }
     },
     touchEndListener: function touchEndListener (e) {
         controls.leftActive = false;
         controls.rightActive = false;
         controls.upActive = false;
         controls.downActive = false;
+        controls.spaceKeyActive = false;
     }
 };
