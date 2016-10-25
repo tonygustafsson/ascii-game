@@ -4,6 +4,7 @@ var mapCanvas = {
     context: document.getElementById('map-canvas').getContext("2d"),
     width: Math.floor(window.innerWidth * 0.95),
     height: Math.floor(window.innerHeight * 0.8),
+    position: null,
     init: function initCanvas() {
         /* Initialize the canvas, set the width and height */
         mapCanvas.width = Math.floor(window.innerWidth * 0.95);
@@ -60,6 +61,8 @@ var mapCanvas = {
         else {
             dialogCanvas.init();
         }
+
+        mapCanvas.position = document.getElementById('map-canvas').getBoundingClientRect();
 
         // Ground
         var groundPattern = context.createPattern(images.handlers.ground, 'repeat');

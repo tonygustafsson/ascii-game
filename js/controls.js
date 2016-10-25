@@ -74,23 +74,23 @@ var controls = {
         }
     },
     touchStartListener: function touchStartListener (e) {
-        var posX = e.targetTouches[0].pageX,
-            posY = e.targetTouches[0].pageY,
-            leftAreaLimit = Math.floor(mapCanvas.width / 6),
-            rightAreaLimit = Math.floor((mapCanvas.width / 6) * 5),
-            upAreaLimit = Math.floor(mapCanvas.height / 6),
-            downAreaLimit = Math.floor((mapCanvas.height / 6) * 5);
+        var touchPosX = e.targetTouches[0].pageX,
+            touchPosY = e.targetTouches[0].pageY,
+            leftAreaLimit = mapCanvas.position.left + 50,
+            rightAreaLimit = mapCanvas.position.right - 50,
+            upAreaLimit = mapCanvas.position.top + 50,
+            downAreaLimit = mapCanvas.position.bottom - 50;
 
-        if (posX < leftAreaLimit && posY > upAreaLimit && posY < downAreaLimit) {
+        if (touchPosX < leftAreaLimit && touchPosY > upAreaLimit && touchPosY < downAreaLimit) {
             controls.leftActive = true;
         }
-        else if (posX > rightAreaLimit && posY > upAreaLimit && posY < downAreaLimit) {
+        else if (touchPosX > rightAreaLimit && touchPosY > upAreaLimit && touchPosY < downAreaLimit) {
             controls.rightActive = true;
         }
-        else if (posY < upAreaLimit) {
+        else if (touchPosY < upAreaLimit) {
             controls.upActive = true;
         }
-        else if (posY > downAreaLimit) {
+        else if (touchPosY > downAreaLimit) {
             controls.downActive = true;
         }
     },
