@@ -26,7 +26,7 @@ var charactersCanvas = {
     moveListener: function moveListener () {
         var originalPositionX = controls.position.x,
             originalPositionY = controls.position.y,
-            speed = 3;
+            speed = mapCanvas.width / 600;
 
         if (!controls.rightActive && !controls.leftActive && !controls.upActive && !controls.downActive) {
             requestAnimationFrame(charactersCanvas.moveListener);
