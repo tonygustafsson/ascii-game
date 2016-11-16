@@ -50,6 +50,10 @@ h1 {
     text-align: center;
 }
 
+a {
+    color: #fff;
+}
+
 audio {
     margin: 10px auto;
     display: block;
@@ -57,4 +61,14 @@ audio {
 
 ::-webkit-media-controls-panel {
     background: #000;
+}
+
+.left {
+    float: left;
+    margin-left: 5%;
+}
+
+.right {
+    float: right;
+    margin-right: 5%;
 }
