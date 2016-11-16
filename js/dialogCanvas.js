@@ -45,7 +45,7 @@ var dialogCanvas = {
         dialogCanvas.topOffset += dialogCanvas.fontSize * 2;
 
         // Paragraph
-        var paragraph = "This game is an experiment where you will guide this little Character through adventures and obsticles. You play by using the keyboard arrows. Up. Down. Left. Right.";
+        var paragraph = "This game is an experiment where you will guide this little Character through adventures and obsticles. You play by using the keyboard arrows. Up. Down. Left. Right. To use the awesome sword you press the spacebar. If you are on a touch device you can press the edges of the map to move, or the middle to use the sword.";
         dialogCanvas.context.font = dialogCanvas.fontSize + "px Palatino Linotype";
         dialogCanvas.context.fillStyle = "#000";
         dialogCanvas.wrapText(paragraph, dialogCanvas.leftOffset, dialogCanvas.topOffset, Math.floor(dialogCanvas.width / 1.4), dialogCanvas.fontSize * 1.25);
