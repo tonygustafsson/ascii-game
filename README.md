@@ -4,6 +4,8 @@
 This is a demo game using HTML5 canvas.
 The maps is created by ASCII files which is kind of cool.
 
+[Online demo](http://www.tonyg.se/projects/game/)
+
 ## When?
 I don't know if this game ever will be released.
 
