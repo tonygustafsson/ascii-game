@@ -1,17 +1,17 @@
-"use strict";
+'use strict';
 
 var charactersCanvas = {
-    context: document.getElementById('characters-canvas').getContext("2d"),
+    context: document.getElementById('characters-canvas').getContext('2d'),
     width: Math.floor(window.innerWidth * 0.95),
     height: Math.floor(window.innerHeight * 0.8),
     init: function initCanvas() {
         /* Initialize the canvas, set the width and height */
         var canvas = this;
 
-        canvas.width = (map.columns * map.blockSize) - map.blockSize;
+        canvas.width = map.columns * map.blockSize - map.blockSize;
         canvas.height = map.rows * map.blockSize;
 
-        canvas.context.canvas.width  = canvas.width;
+        canvas.context.canvas.width = canvas.width;
         canvas.context.canvas.height = canvas.height;
 
         var newPosition = charactersCanvas.getNewPosition();
@@ -23,7 +23,7 @@ var charactersCanvas = {
         }
     },
     moveTimer: null,
-    moveListener: function moveListener () {
+    moveListener: function moveListener() {
         var originalPositionX = controls.position.x,
             originalPositionY = controls.position.y,
             speed = mapCanvas.width / 600;
@@ -58,37 +58,33 @@ var charactersCanvas = {
 
         if (images.characterSprite.pixelMovementIndex >= images.characterSprite.pixelMovementBeforeChange) {
             // Change character sprite
-            images.characterSprite.column = (images.characterSprite.column < images.characterSprite.totalColumns) ? images.characterSprite.column + 1 : 0;
+            images.characterSprite.column = images.characterSprite.column < images.characterSprite.totalColumns ? images.characterSprite.column + 1 : 0;
             images.characterSprite.pixelMovementIndex = 0;
         }
 
         var directionBlock = mapCanvas.getBlockFromPixel(controls.position.x, controls.position.y);
 
-        if (directionBlock.type == "right") {
-            if (!map.changeMap("right")) {
+        if (directionBlock.type == 'right') {
+            if (!map.changeMap('right')) {
                 controls.position.x = originalPositionX;
                 controls.position.y = originalPositionY;
             }
-        }
-        else if (directionBlock.type == "left") {
-            if (!map.changeMap("left")) {
+        } else if (directionBlock.type == 'left') {
+            if (!map.changeMap('left')) {
                 controls.position.x = originalPositionX;
                 controls.position.y = originalPositionY;
             }
-        }
-        else if (directionBlock.type == "up") {
-            if (!map.changeMap("up")) {
+        } else if (directionBlock.type == 'up') {
+            if (!map.changeMap('up')) {
                 controls.position.x = originalPositionX;
                 controls.position.y = originalPositionY;
             }
-        }
-        else if (directionBlock.type == "down") {
-            if (!map.changeMap("down")) {
+        } else if (directionBlock.type == 'down') {
+            if (!map.changeMap('down')) {
                 controls.position.x = originalPositionX;
                 controls.position.y = originalPositionY;
             }
-        }
-        else if (directionBlock.type == "wall" || directionBlock.type == "bush" || directionBlock.type == "box" || directionBlock.type == "water") {
+        } else if (directionBlock.type == 'wall' || directionBlock.type == 'bush' || directionBlock.type == 'box' || directionBlock.type == 'water') {
             // Avoid walls and stuff
             controls.position.x = originalPositionX;
             controls.position.y = originalPositionY;
@@ -98,7 +94,7 @@ var charactersCanvas = {
 
         charactersCanvas.moveTimer = requestAnimationFrame(charactersCanvas.moveListener);
     },
-    paintCharacter: function paintCharacter () {
+    paintCharacter: function paintCharacter() {
         var characterPosX = Math.floor(images.characterSprite.column * images.characterSprite.spriteWidth),
             characterPosY = Math.floor(images.characterSprite.row * images.characterSprite.spriteHeight);
 
@@ -118,27 +114,27 @@ var charactersCanvas = {
             map.blockSize
         );
     },
-    getNewPosition: function getNewPosition () {
+    getNewPosition: function getNewPosition() {
         var x = 0,
             y = 0;
 
         switch (controls.position.lastDirection) {
-            case "right":
+            case 'right':
                 x = Math.floor(map.directionBlocks.left.column * map.blockSize) + map.blockSize;
                 y = Math.floor(map.directionBlocks.left.row * map.blockSize);
 
                 return { x: x, y: y };
-            case "left":
+            case 'left':
                 x = Math.floor(map.directionBlocks.right.column * map.blockSize) - map.blockSize;
                 y = Math.floor(map.directionBlocks.right.row * map.blockSize);
 
                 return { x: x, y: y };
-            case "up":
+            case 'up':
                 x = Math.floor(map.directionBlocks.down.column * map.blockSize);
                 y = Math.floor(map.directionBlocks.down.row * map.blockSize) - map.blockSize;
 
                 return { x: x, y: y };
-            case "down":
+            case 'down':
                 x = Math.floor(map.directionBlocks.up.column * map.blockSize);
                 y = Math.floor(map.directionBlocks.up.row * map.blockSize) + map.blockSize;
 

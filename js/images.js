@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 var images = {
-    init: function init () {
+    init: function init() {
         for (var i = 0; i < this.sources.length; i++) {
             this.numberOfImages++;
 
@@ -13,7 +13,7 @@ var images = {
             this.handlers[name].src = 'img/' + src + '.png';
         }
     },
-    onLoad: function onImageLoad () {
+    onLoad: function onImageLoad() {
         images.loadedImages++;
 
         if (images.loadedImages >= images.numberOfImages) {
@@ -46,15 +46,15 @@ var images = {
     },
     handlers: [],
     sources: [
-        { name: 'ground', 'src': 'ground1' },
-        { name: 'water', 'src': 'water' },
-        { name: 'wall', 'src': 'wall2' },
-        { name: 'bush', 'src': 'bush' },
-        { name: 'box', 'src': 'box' },
-        { name: 'dialogFrame', 'src': 'dialog-frame' },
-        { name: 'button', 'src': 'button' },
-        { name: 'swordSprite', 'src': 'sword-sprite' },
-        { name: 'characterSprite', 'src': 'character1-sprite' }
+        { name: 'ground', src: 'ground1' },
+        { name: 'water', src: 'water' },
+        { name: 'wall', src: 'wall2' },
+        { name: 'bush', src: 'bush' },
+        { name: 'box', src: 'box' },
+        { name: 'dialogFrame', src: 'dialog-frame' },
+        { name: 'button', src: 'button' },
+        { name: 'swordSprite', src: 'sword-sprite' },
+        { name: 'characterSprite', src: 'character1-sprite' }
     ],
     numberOfImages: 0,
     loadedImages: 0

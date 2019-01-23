@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 var map = {
-    currentMap: "0-0",
+    currentMap: '0-0',
     blocks: [],
     blockSize: null,
     rows: 0,
@@ -24,23 +24,23 @@ var map = {
             column: null
         }
     },
-    createBlock: function createBlock (character, index) {
+    createBlock: function createBlock(character, index) {
         var row = Math.floor(index / map.columns),
             column = Math.floor(index % map.columns);
 
         var block = {
             character: character,
-            type: (function () {
+            type: (function() {
                 switch (character) {
-                    case "#":
-                        return "wall";
-                    case "V":
-                        return "bush";
-                    case "B":
-                        return "box";
-                    case "W":
-                        return "water";
-                    case "X":
+                    case '#':
+                        return 'wall';
+                    case 'V':
+                        return 'bush';
+                    case 'B':
+                        return 'box';
+                    case 'W':
+                        return 'water';
+                    case 'X':
                         if (controls.position.index === null) {
                             // Set initial position
                             controls.position.index = map.blocks.length;
@@ -48,32 +48,32 @@ var map = {
                             controls.position.column = column;
                         }
 
-                        return "you";
-                    case "R":
+                        return 'you';
+                    case 'R':
                         map.directionBlocks.right.row = row;
                         map.directionBlocks.right.column = column;
-                        return "right";
-                    case "L":
+                        return 'right';
+                    case 'L':
                         map.directionBlocks.left.row = row;
                         map.directionBlocks.left.column = column;
-                        return "left";
-                    case "U":
+                        return 'left';
+                    case 'U':
                         map.directionBlocks.up.row = row;
                         map.directionBlocks.up.column = column;
-                        return "up";
-                    case "D":
+                        return 'up';
+                    case 'D':
                         map.directionBlocks.down.row = row;
                         map.directionBlocks.down.column = column;
-                        return "down";
+                        return 'down';
                     default:
-                        return "space";
+                        return 'space';
                 }
             })(),
-            row: function getRow () {
+            row: function getRow() {
                 // Get current row index
                 return row;
             },
-            column: function getColumn () {
+            column: function getColumn() {
                 // Get current column index on it's own row with modulus
                 return column;
             },
@@ -82,15 +82,15 @@ var map = {
 
         map.blocks.push(block);
     },
-    getBlock: function getBlock (direction) {
+    getBlock: function getBlock(direction) {
         var blockIndex = 0;
 
         switch (direction) {
             case 'up':
-                blockIndex = (controls.position.index - map.columns);
+                blockIndex = controls.position.index - map.columns;
                 break;
             case 'down':
-                blockIndex = (controls.position.index + map.columns);
+                blockIndex = controls.position.index + map.columns;
                 break;
             case 'left':
                 blockIndex = controls.position.index - 1;
@@ -102,7 +102,7 @@ var map = {
 
         return map.blocks[blockIndex];
     },
-    get: function getMap () {
+    get: function getMap() {
         var request = new XMLHttpRequest();
         request.open('GET', 'rooms/' + map.currentMap + '.map', true);
 
@@ -116,7 +116,7 @@ var map = {
                     document.getElementById('article').removeChild(loading);
                 }
 
-                var rows = response.split("\n"),
+                var rows = response.split('\n'),
                     index = 0;
 
                 // Get map settings from first line
@@ -129,7 +129,7 @@ var map = {
                 map.blocks = [];
 
                 for (var i = 0; i < rows.length; i++) {
-                    var columns = rows[i].split("");
+                    var columns = rows[i].split('');
 
                     for (var j = 0; j < columns.length; j++) {
                         map.createBlock(columns[j], index);
@@ -141,8 +141,7 @@ var map = {
                 charactersCanvas.init();
                 swordCanvas.init();
                 images.init();
-            }
-            else {
+            } else {
                 document.getElementById('loading').innerHTML = 'Could not access map.';
             }
         };
@@ -153,8 +152,8 @@ var map = {
 
         request.send();
     },
-    setMapSettings: function setMapSettings (settings) {
-        var settingsPairs = settings.split(";");
+    setMapSettings: function setMapSettings(settings) {
+        var settingsPairs = settings.split(';');
 
         for (var i = 0; i < settingsPairs.length; i++) {
             var thisSetting = settingsPairs[i].split(':');
@@ -169,21 +168,18 @@ var map = {
         }
     },
     lastDirection: null,
-    changeMap: function changeMap (direction) {
-        var mapPosition = map.currentMap.split("-"),
+    changeMap: function changeMap(direction) {
+        var mapPosition = map.currentMap.split('-'),
             mapX = mapPosition[0],
             mapY = mapPosition[1];
 
-        if (direction == "left") {
+        if (direction == 'left') {
             mapX--;
-        }
-        else if (direction == "right") {
+        } else if (direction == 'right') {
             mapX++;
-        }
-        else if (direction == "up") {
+        } else if (direction == 'up') {
             mapY--;
-        }
-        else if (direction == "down") {
+        } else if (direction == 'down') {
             mapY++;
         }
 
@@ -194,7 +190,7 @@ var map = {
 
         map.lastDirection = direction;
 
-        var mapId = mapX + "-" + mapY;
+        var mapId = mapX + '-' + mapY;
         map.currentMap = mapId;
         controls.disableKeyPress = true;
         map.get();

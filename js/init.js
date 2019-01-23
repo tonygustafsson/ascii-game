@@ -2,7 +2,7 @@
     Created by: Tony Gustafsson
 -------------------------------- */
 
-(function game () {
+(function game() {
     map.get();
     controls.init();
     audio.init();

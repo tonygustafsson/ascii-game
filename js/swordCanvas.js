@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
 var swordCanvas = {
-    context: document.getElementById('sword-canvas').getContext("2d"),
+    context: document.getElementById('sword-canvas').getContext('2d'),
     width: Math.floor(window.innerWidth * 0.95),
     height: Math.floor(window.innerHeight * 0.8),
     init: function initCanvas() {
         /* Initialize the canvas, set the width and height */
-        swordCanvas.width = (map.columns * map.blockSize) - map.blockSize;
+        swordCanvas.width = map.columns * map.blockSize - map.blockSize;
         swordCanvas.height = map.rows * map.blockSize;
 
-        swordCanvas.context.canvas.width  = swordCanvas.width;
+        swordCanvas.context.canvas.width = swordCanvas.width;
         swordCanvas.context.canvas.height = swordCanvas.height;
 
         if (swordCanvas.swordTimer === null) {
@@ -17,7 +17,7 @@ var swordCanvas = {
         }
     },
     swordTimer: null,
-    swordListener: function swordListener () {
+    swordListener: function swordListener() {
         if (!controls.spaceKeyActive) {
             // Clear sword canvas
             swordCanvas.context.clearRect(0, 0, swordCanvas.width, swordCanvas.height);
@@ -33,7 +33,7 @@ var swordCanvas = {
 
         if (images.swordSprite.pixelMovementIndex >= images.swordSprite.pixelMovementBeforeChange) {
             // Change sword sprite
-            images.swordSprite.column = (images.swordSprite.column < images.swordSprite.totalColumns) ? images.swordSprite.column + 1 : 0;
+            images.swordSprite.column = images.swordSprite.column < images.swordSprite.totalColumns ? images.swordSprite.column + 1 : 0;
             images.swordSprite.pixelMovementIndex = 0;
         }
 
@@ -41,24 +41,21 @@ var swordCanvas = {
 
         swordCanvas.swordTimer = requestAnimationFrame(swordCanvas.swordListener);
     },
-    paintSword: function paintSword () {
+    paintSword: function paintSword() {
         var characterOffsetX = 0,
-        characterOffsetY = 0;
+            characterOffsetY = 0;
 
-        if (controls.position.lastDirection == "left") {
+        if (controls.position.lastDirection == 'left') {
             characterOffsetX = 4;
             characterOffsetY = 4;
             images.swordSprite.row = 1;
-        }
-        else if (controls.position.lastDirection == "right") {
+        } else if (controls.position.lastDirection == 'right') {
             images.swordSprite.row = 2;
             characterOffsetX = 35;
             characterOffsetY = 6;
-        }
-        else if (controls.position.lastDirection == "up") {
+        } else if (controls.position.lastDirection == 'up') {
             images.swordSprite.row = 3;
-        }
-        else if (controls.position.lastDirection == "down") {
+        } else if (controls.position.lastDirection == 'down') {
             images.swordSprite.row = 0;
             characterOffsetX = 4;
             characterOffsetY = 10;

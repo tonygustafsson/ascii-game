@@ -1,7 +1,7 @@
-"use strict";
+'use strict';
 
 var controls = {
-    init: function init () {
+    init: function init() {
         document.addEventListener('touchstart', controls.touchStartListener);
         document.addEventListener('touchend', controls.touchEndListener);
         document.addEventListener('keydown', controls.keyboardDownListener);
@@ -21,7 +21,7 @@ var controls = {
     leftKeyActive: false,
     rightKeyActive: false,
     spaceKeyActive: false,
-    keyboardDownListener: function keyboardDownListener (e) {
+    keyboardDownListener: function keyboardDownListener(e) {
         if (controls.disableKeyPress) {
             return;
         }
@@ -49,7 +49,7 @@ var controls = {
                 break;
         }
     },
-    keyboardUpListener: function keyboardUpListener (e) {
+    keyboardUpListener: function keyboardUpListener(e) {
         switch (e.keyCode) {
             case 38:
                 e.preventDefault();
@@ -73,7 +73,7 @@ var controls = {
                 break;
         }
     },
-    touchStartListener: function touchStartListener (e) {
+    touchStartListener: function touchStartListener(e) {
         var touchPosX = e.targetTouches[0].pageX,
             touchPosY = e.targetTouches[0].pageY,
             leftAreaLimit = mapCanvas.position.left + 50,
@@ -83,22 +83,23 @@ var controls = {
 
         if (touchPosX < leftAreaLimit && touchPosY > upAreaLimit && touchPosY < downAreaLimit) {
             controls.leftActive = true;
-        }
-        else if (touchPosX > rightAreaLimit && touchPosY > upAreaLimit && touchPosY < downAreaLimit) {
+        } else if (touchPosX > rightAreaLimit && touchPosY > upAreaLimit && touchPosY < downAreaLimit) {
             controls.rightActive = true;
-        }
-        else if (touchPosY < upAreaLimit) {
+        } else if (touchPosY < upAreaLimit) {
             controls.upActive = true;
-        }
-        else if (touchPosY > downAreaLimit) {
+        } else if (touchPosY > downAreaLimit) {
             controls.downActive = true;
-        }
-        else if (touchPosX > mapCanvas.position.left && touchPosX < mapCanvas.position.right && touchPosY > mapCanvas.position.top && touchPosY < mapCanvas.position.bottom) {
+        } else if (
+            touchPosX > mapCanvas.position.left &&
+            touchPosX < mapCanvas.position.right &&
+            touchPosY > mapCanvas.position.top &&
+            touchPosY < mapCanvas.position.bottom
+        ) {
             // Use sword if touch on canvas if not the edges
             controls.spaceKeyActive = true;
         }
     },
-    touchEndListener: function touchEndListener (e) {
+    touchEndListener: function touchEndListener(e) {
         controls.leftActive = false;
         controls.rightActive = false;
         controls.upActive = false;

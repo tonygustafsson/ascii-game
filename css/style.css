@@ -3,7 +3,7 @@ html {
 }
 
 body {
-    font-family: "Lucida Console", Monaco, monospace;
+    font-family: 'Lucida Console', Monaco, monospace;
     background: #000;
     margin: 0;
     color: #fff;
@@ -20,7 +20,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    transition: left .5s ease-out, top .5s ease-out;
+    transition: left 0.5s ease-out, top 0.5s ease-out;
     z-index: 1;
 }
 
@@ -36,9 +36,8 @@ body {
     z-index: 4;
     cursor: pointer;
     opacity: 0;
-    transition: opacity .5s;
+    transition: opacity 0.5s;
     pointer-events: none;
-
 }
 
 .dialog-canvas.visible {
