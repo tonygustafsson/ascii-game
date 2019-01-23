@@ -74,4 +74,4 @@ A separate canvas layer for the sword... kind of a temporary solution I think.
 
 ## Demo
 
-[Try it out](http://www.tonyg.se/projects/game/)
+[Try it out](https://www.tonyg.se/projects/dungeons-of-darrak/)
